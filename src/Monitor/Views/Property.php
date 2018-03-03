@@ -92,7 +92,7 @@ class Monitor_Views_Property
         }
         // Set the default
         $result = $property->invoke($request, $match);
-        $result = array_merge($property->_data, $request);
+        $result = array_merge($property->jsonSerialize(), $result);
         return $result;
     }
 }
