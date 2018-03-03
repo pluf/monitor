@@ -1,0 +1,47 @@
+{
+	"name" : "pluf/monitor",
+	"description" : "Pluf monitor module",
+	"type" : "library",
+	"license" : "MIT",
+	"authors" : [{
+			"name" : "Mostafa Barmshory",
+			"email" : "mostafa.barmshory@dpq.co.ir"
+		}, {
+			"name" : "Mohammad hadi Mansouri",
+			"email" : "mohammad.hadi.mansouri@dpq.co.ir"
+		}, {
+			"name" : "Mahdi Arighiani",
+			"email" : "mahdi.arghiani@dpq.co.ir"
+		}
+	],
+	"minimum-stability" : "stable",
+	"require" : {
+		"pluf/core" : "^3.0.0"
+	},
+	"require-dev" : {
+		"pluf/test" : "^3.0.0",
+		"pluf/user" : "^3.0.0"
+	},
+	"include-path" : [
+		"src/"
+	],
+	"autoload" : {
+		"psr-0" : {
+			"test" : ""
+		}
+	},
+	"support" : {
+		"wiki" : "https://github.com/pluf/monitor/wiki",
+		"issues" : "https://github.com/pluf/monitor/issues",
+		"email" : "info@pluf.ir",
+		"source" : "https://github.com/pluf/monitor"
+	},
+	"homepage" : "http://pluf.ir",
+	"keywords" : [
+		"pluf",
+		"php",
+		"framework",
+		"restfull",
+		"pluf-module"
+	]
+}
