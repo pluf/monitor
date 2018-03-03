@@ -28,6 +28,7 @@ class Monitor extends Pluf_Model
             'name' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => false,
+                'is_null' => false,
                 'size' => 100,
                 'verbose' => __('property name'),
                 'help_text' => __('The property name must be unique for each application.'),
