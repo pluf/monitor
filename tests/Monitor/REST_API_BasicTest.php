@@ -96,5 +96,24 @@ class Monitor_REST_API_BasicTest extends TestCase
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
         Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
         Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
+        Test_Assert::assertResponseNonEmptyPaginateList($response, 'Monitor list is empty?!');
+    }
+    
+    /**
+     * @test
+     */
+    public function getOwnerMonitor()
+    {
+        // login
+        $response = self::$client->post('/api/user/login', array(
+            'login' => 'admin',
+            'password' => 'admin'
+        ));
+        Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
+        
+        $response = self::$client->get('/api/monitor/user/property/owner');
+        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
+        Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
+        Test_Assert::assertResponseAsModel($response, 'Is not a valid model');
     }
 }

@@ -100,7 +100,7 @@ class Monitor_Property extends Pluf_Model
     function invoke($request, $match = array())
     {
         $match['property'] = $this->name;
-        return call_user_func_array(explode('::', $this->function), array(
+        $result = call_user_func_array(explode('::', $this->function), array(
             $request,
             $match
         ));
@@ -136,8 +136,8 @@ class Monitor_Property extends Pluf_Model
         $monitor = $monitor->getOne($sql->gen());
         if (! isset($monitor) || $monitor->isAnonymous()) {
             $monitor = new Monitor();
-            $monitor->name = $data['name'];
-            if (! $monitor->create()) {
+            $monitor->name = $data['monitor'];
+            if (!$monitor->create()) {
                 throw new Pluf_Exception('Fail to create monitor');
             }
         }

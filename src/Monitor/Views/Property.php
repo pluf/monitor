@@ -64,7 +64,14 @@ class Monitor_Views_Property
         if (isset($match['monitorId'])) {
             $monitorId = $match['monitorId'];
         } else if (isset($match['monitor'])) {
-            $monitor = Pluf::factory('Monitor')->getOne('name=' . $match['monitor']);
+            $sql = new Pluf_SQL('name=%s', array(
+                $match['monitor']
+            ));
+            $monitor = new Monitor();
+            $monitor = $monitor->getOne($sql->gen());
+            if(!$monitor){
+                throw new Pluf_Exception_DoesNotExist('Monitor not found :' . $match['monitor']);
+            }
             $monitorId = $monitor->id;
         }
         
@@ -75,8 +82,11 @@ class Monitor_Views_Property
             if(!isset($monitorId)) {
                 throw new Exception('The monitor was not provided in the parameters.');
             }
-            $property = Pluf::factory('Monitor_Property')->getOne(
-                'name=' . $match['property'] . 'AND monitor=' . $monitorId);
+            $sql = new Pluf_SQL('name=%s AND monitor=%s', array(
+                $match['property'],
+                $monitorId
+            ));
+            $property = Pluf::factory('Monitor_Property')->getOne($sql->gen());
         } else {
             throw new Exception('The property was not provided in the parameters.');
         }
