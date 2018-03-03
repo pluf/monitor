@@ -25,7 +25,7 @@ class Monitor_Views_Property
 
     public function find ($request, $match)
     {
-        $content = new Pluf_Paginator(new Pluf_Monitor());
+        $content = new Pluf_Paginator(new Monitor_Monitor());
         $sql = new Pluf_SQL('bean=%s AND level>=%s', 
                 array(
                         $match['monitor'],

@@ -20,23 +20,19 @@ Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
 Pluf::loadFunction('Monitor_Shortcuts_UserLevel');
 Pluf::loadFunction('Monitor_Shortcuts_BeansToPrometheus');
 
-class Monitor_Views_Bean
+class Monitor_Views_Monitor
 {
 
     /**
      *
-     * @param Pluf_HTTP_Request $request            
-     * @param array $match            
+     * @param Pluf_HTTP_Request $request
+     * @param array $match
      * @return unknown
      */
-    public function find ($request, $match)
+    public function find($request, $match)
     {
         $content = new Pluf_Paginator(new Pluf_Monitor());
-        $sql = new Pluf_SQL('level>=%s', 
-                array(
-                        Monitor_Shortcuts_UserLevel($request)
-                ));
-        $content->forced_where = $sql;
+        $sql = new Pluf_SQL();
         if (key_exists('_px_format', $request->REQUEST)) {
             switch ($request->REQUEST['_px_format']) {
                 case 'text/prometheus':
@@ -46,39 +42,34 @@ class Monitor_Views_Bean
             }
         }
         $content->list_filters = array(
-                'bean',
-                'property',
-                'title'
-        );
-        $list_display = array(
-                'title' => __('title'),
-                'bean' => __('bean name'),
-                'property' => __('property'),
-                'description' => __('description')
+            'monitor',
+            'name',
+            'title'
         );
         $search_fields = array(
-                'title',
-                'description',
-                'bean',
-                'property'
+            'title',
+            'description',
+            'monitor',
+            'name'
         );
         $sort_fields = array(
-                'id',
-                'name',
-                'title',
-                'bean',
-                'property',
-                'creation_date',
-                'modif_dtime'
+            'id',
+            'name',
+            'title',
+            'monitor',
+            'creation_date',
+            'modif_dtime'
         );
-        $content->sort_order = array('id', 'DESC');
-        $content->configure($list_display, $search_fields, $sort_fields);
+        $content->sort_order = array(
+            'id',
+            'DESC'
+        );
+        $content->configure(array(), $search_fields, $sort_fields);
         $content->setFromRequest($request);
         if (key_exists('_px_format', $request->REQUEST)) {
             switch ($request->REQUEST['_px_format']) {
                 case 'text/prometheus':
-                    return Monitor_Shortcuts_BeansToPrometheus(
-                    $content->render_object(), $request, $match);
+                    return Monitor_Shortcuts_BeansToPrometheus($content->render_object(), $request, $match);
             }
         }
         return $content->render_object();

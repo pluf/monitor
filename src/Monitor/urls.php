@@ -17,30 +17,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 return array(
-    // Query
-    array(
-        'regex' => '#^/query$#',
-        'model' => 'Monitor_Views_Query',
-        'method' => 'query',
-        'http_method' => 'GET'
-    ),
-    array(
-        'regex' => '#^/query_range$#',
-        'model' => 'Monitor_Views_Query',
-        'method' => 'queryRange',
-        'http_method' => 'GET'
-    ),
-    array(
-        'regex' => '#^/series$#',
-        'model' => 'Monitor_Views_Query',
-        'method' => 'series',
-        'http_method' => 'GET'
-    ),
-    
     // Monitor
     array(
         'regex' => '#^/find$#',
-        'model' => 'Monitor_Views_Bean',
+        'model' => 'Monitor_Views_Monitor',
         'method' => 'find',
         'http-method' => 'GET'
     ),

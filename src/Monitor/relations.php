@@ -16,4 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-return array();
+return array(
+    'Monitor_Property' => array(
+        'relate_to' => array(
+            'Monitor'
+        )
+    ),
+);
