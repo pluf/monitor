@@ -35,7 +35,7 @@ $cfg['timezone'] = 'Europe/Berlin';
 // Set the debug variable to true to force the recompilation of all
 // the templates each time during development
 $cfg['debug'] = true;
-$cfg['multitenant'] = true;
+$cfg['multitenant'] = false;
 
 /*
  * Middlewares
@@ -43,7 +43,6 @@ $cfg['multitenant'] = true;
 $cfg['middleware_classes'] = array(
     // find tenant
     'Pluf_Middleware_TenantEmpty',
-    'Pluf_Middleware_TenantFromConfig',
     // Sessions
     'Pluf_Middleware_Session',
     'User_Middleware_Session'

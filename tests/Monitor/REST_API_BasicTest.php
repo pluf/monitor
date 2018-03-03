@@ -38,6 +38,7 @@ class Monitor_REST_API_BasicTest extends TestCase
         Pluf::start(__DIR__ . '/../conf/config.php');
         $m = new Pluf_Migration(Pluf::f('installed_apps'));
         $m->install();
+        $m->init();
         
         $user = new User();
         $user->login = 'test';
@@ -56,10 +57,10 @@ class Monitor_REST_API_BasicTest extends TestCase
         
         self::$client = new Test_Client(array(
             array(
-                'app' => 'SuperTenant',
-                'regex' => '#^/api/saas#',
+                'app' => 'Monitor',
+                'regex' => '#^/api/monitor#',
                 'base' => '',
-                'sub' => include 'SuperTenant/urls.php'
+                'sub' => include 'Monitor/urls.php'
             ),
             array(
                 'app' => 'User',
