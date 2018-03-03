@@ -7,7 +7,7 @@
  * @author hadi <mohammad.hadi.mansouri@dpq.co.ir>
  *
  */
-class Monitor extends Pluf_Model
+class Monitor_Property extends Pluf_Model
 {
 
     /**
@@ -17,7 +17,7 @@ class Monitor extends Pluf_Model
      */
     function init()
     {
-        $this->_a['table'] = 'monitors';
+        $this->_a['table'] = 'monitor_property';
         $this->_a['cols'] = array(
             'id' => array(
                 'type' => 'Pluf_DB_Field_Sequence',
@@ -28,7 +28,6 @@ class Monitor extends Pluf_Model
             'name' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => false,
-                'is_null' => false,
                 'size' => 100,
                 'verbose' => __('property name'),
                 'help_text' => __('The property name must be unique for each application.'),
@@ -49,6 +48,13 @@ class Monitor extends Pluf_Model
                 'editable' => true,
                 'readable' => true
             ),
+            'function' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => true,
+                'size' => 100,
+                'editable' => false,
+                'readable' => false
+            ),
             'creation_dtime' => array(
                 'type' => 'Pluf_DB_Field_Datetime',
                 'blank' => true,
@@ -60,12 +66,22 @@ class Monitor extends Pluf_Model
                 'blank' => true,
                 'editable' => false,
                 'readable' => true
+            ),
+            // Relations
+            'monitor' => array(
+                'type' => 'Pluf_DB_Field_Foreignkey',
+                'model' => 'Monitor',
+                'blank' => false,
+                'is_null' => false,
+                'relate_name' => 'monitor',
+                'editable' => false,
+                'readable' => true
             )
         );
         
         $this->_a['idx'] = array(
             'monitor_idx' => array(
-                'col' => 'name',
+                'col' => 'monitor, name',
                 'type' => 'unique', // normal, unique, fulltext, spatial
                 'index_type' => '', // hash, btree
                 'index_option' => '',
@@ -73,12 +89,47 @@ class Monitor extends Pluf_Model
                 'lock_option' => ''
             )
         );
+        
+        $this->_a['views'] = array(
+            'all' => array(
+                'select' => $this->getSelect()
+            ),
+//             'beans' => array(
+//                 'select' => 'bean AS bean_id, title, description, level',
+//                 'group' => 'bean',
+//                 'props' => array(
+//                     'bean_id' => 'id'
+//                 )
+//             ),
+//             'properties' => array(
+//                 'select' => 'property AS property_id, title, description, level',
+//                 'props' => array(
+//                     'property_id' => 'id'
+//                 )
+//             )
+        );
     }
 
     /**
+     * فراخوانی مانیتور
      *
-     * {@inheritdoc}
-     * @see Pluf_Model::preSave()
+     * @param unknown $params
+     * @return unknown
+     */
+    function invoke($request, $match = array())
+    {
+        $match['property'] = $this->name;
+        return call_user_func_array(explode('::', $this->function), array(
+            $request,
+            $match
+        ));
+    }
+
+    /**
+     * پیش ذخیره را انجام می‌دهد
+     *
+     * @param $create حالت
+     *            ساخت یا به روز رسانی را تعیین می‌کند
      */
     function preSave($create = false)
     {
