@@ -104,6 +104,7 @@ class Monitor_Property extends Pluf_Model
             $request,
             $match
         ));
+        return $result;
     }
     
     /**

@@ -91,6 +91,8 @@ class Monitor_Views_Property
             throw new Exception('The property was not provided in the parameters.');
         }
         // Set the default
-        return $property->invoke($request, $match);
+        $result = $property->invoke($request, $match);
+        $result = array_merge($property->_data, $request);
+        return $result;
     }
 }
