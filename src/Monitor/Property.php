@@ -130,8 +130,12 @@ class Monitor_Property extends Pluf_Model
     {
         $this->setFromFormData($data);
         $monitor = new Monitor();
-        $monitor = $monitor->getOne('name=' . $data['monitor']);
+        $sql = new Pluf_SQL('name=%s', array(
+            $data['monitor']
+        ));
+        $monitor = $monitor->getOne($sql->gen());
         if (! isset($monitor) || $monitor->isAnonymous()) {
+            $monitor = new Monitor();
             $monitor->name = $data['name'];
             if (! $monitor->create()) {
                 throw new Pluf_Exception('Fail to create monitor');
