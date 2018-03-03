@@ -9,7 +9,7 @@
  */
 class Monitor_Property extends Pluf_Model
 {
-    
+
     /**
      *
      * {@inheritdoc}
@@ -34,13 +34,6 @@ class Monitor_Property extends Pluf_Model
                 'editable' => false,
                 'readable' => true
             ),
-            'title' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
-                'blank' => true,
-                'size' => 50,
-                'editable' => true,
-                'readable' => true
-            ),
             'description' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => true,
@@ -55,12 +48,34 @@ class Monitor_Property extends Pluf_Model
                 'editable' => false,
                 'readable' => false
             ),
-            'creation_dtime' => array(
-                'type' => 'Pluf_DB_Field_Datetime',
+            
+            'value' => array(
+                'type' => 'Pluf_DB_Field_Float',
                 'blank' => true,
                 'editable' => false,
                 'readable' => true
             ),
+            'unit' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'blank' => true,
+                'size' => 100,
+                'editable' => false,
+                'readable' => true
+            ),
+            'interval' => array(
+                'type' => 'Pluf_DB_Field_Integer',
+                'blank' => true,
+                'editable' => false,
+                'readable' => false
+            ),
+            'cacheable' => array(
+                'type' => 'Pluf_DB_Field_Boolean',
+                'blank' => true,
+                'defualt' => false,
+                'editable' => false,
+                'readable' => false
+            ),
+            
             'modif_dtime' => array(
                 'type' => 'Pluf_DB_Field_Datetime',
                 'blank' => true,
@@ -90,7 +105,7 @@ class Monitor_Property extends Pluf_Model
             )
         );
     }
-    
+
     /**
      * Call monitor property and get value
      *
@@ -99,14 +114,32 @@ class Monitor_Property extends Pluf_Model
      */
     function invoke($request, $match = array())
     {
+        // Get old value
+        if ($this->cacheable) {
+            $now = new DateTime('now');
+            $last = new DateTime($this->modif_dtime);
+            $diff = $now->getTimestamp() - $last->getTimestamp();
+            $interval = $this->interval;
+            if($interval == null || $interval == 'undefined'){
+                $interval = 3600;
+            }
+            if ($diff <= $interval) {
+                return;
+            }
+        }
+        // Get new value
         $match['property'] = $this->name;
         $result = call_user_func_array(explode('::', $this->function), array(
             $request,
             $match
         ));
+        $this->value = $result;
+        if (! $this->update()) {
+            throw new Pluf_Exception('Fail to update model');
+        }
         return $result;
     }
-    
+
     /**
      *
      * {@inheritdoc}
@@ -114,12 +147,9 @@ class Monitor_Property extends Pluf_Model
      */
     function preSave($create = false)
     {
-        if ($this->id == '') {
-            $this->creation_dtime = gmdate('Y-m-d H:i:s');
-        }
         $this->modif_dtime = gmdate('Y-m-d H:i:s');
     }
-    
+
     /**
      * This function is used to load data in installation process.
      * Data must
@@ -138,7 +168,7 @@ class Monitor_Property extends Pluf_Model
         if (! isset($monitor) || $monitor->isAnonymous()) {
             $monitor = new Monitor();
             $monitor->name = $data['monitor'];
-            if (!$monitor->create()) {
+            if (! $monitor->create()) {
                 throw new Pluf_Exception('Fail to create monitor');
             }
         }
