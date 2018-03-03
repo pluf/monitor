@@ -89,25 +89,6 @@ class Monitor_Property extends Pluf_Model
                 'lock_option' => ''
             )
         );
-        
-        $this->_a['views'] = array(
-            'all' => array(
-                'select' => $this->getSelect()
-            )
-            // 'beans' => array(
-            // 'select' => 'bean AS bean_id, title, description, level',
-            // 'group' => 'bean',
-            // 'props' => array(
-            // 'bean_id' => 'id'
-            // )
-            // ),
-            // 'properties' => array(
-            // 'select' => 'property AS property_id, title, description, level',
-            // 'props' => array(
-            // 'property_id' => 'id'
-            // )
-            // )
-        );
     }
 
     /**
@@ -150,9 +131,9 @@ class Monitor_Property extends Pluf_Model
         $this->setFromFormData($data);
         $monitor = new Monitor();
         $monitor = $monitor->getOne('name=' . $data['monitor']);
-        if(!isset($monitor) || $monitor->isAnonymous()){
-            $monitor->name =  $data['name'];
-            if(!$monitor->create()){
+        if (! isset($monitor) || $monitor->isAnonymous()) {
+            $monitor->name = $data['name'];
+            if (! $monitor->create()) {
                 throw new Pluf_Exception('Fail to create monitor');
             }
         }

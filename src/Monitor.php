@@ -72,19 +72,12 @@ class Monitor extends Pluf_Model
                 'lock_option' => ''
             )
         );
-        
-//         $this->_a['views'] = array(
-//             'all' => array(
-//                 'select' => $this->getSelect()
-//             )
-//         );
     }
 
     /**
-     * پیش ذخیره را انجام می‌دهد
      *
-     * @param $create حالت
-     *            ساخت یا به روز رسانی را تعیین می‌کند
+     * {@inheritdoc}
+     * @see Pluf_Model::preSave()
      */
     function preSave($create = false)
     {

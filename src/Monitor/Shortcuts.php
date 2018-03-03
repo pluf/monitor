@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Pluf Framework, a simple PHP Application Framework.
  * Copyright (C) 2010-2020 Phoinex Scholars Co. http://dpq.co.ir
@@ -18,56 +19,58 @@
  */
 /**
  * Return monitor level
- * 
+ *
  * @param Pluf_HTTP_Request $request
  * @throws Pluf_HTTP_Error403
  * @return number
  */
-function Monitor_Shortcuts_UserLevel ($request)
+function Monitor_Shortcuts_UserLevel($request)
 {
     $user = $request->user;
-    if ($user->isAnonymous() || !$user->active) {
+    if ($user->isAnonymous() || ! $user->active) {
         return 100;
     }
-//     if($user->administrator){
-//         return 0;
-//     }
-//     if($user->staff){
-//         return 1;
-//     }
-    if($user->hasPerm('Pluf::owner')){
+    // if($user->administrator){
+    // return 0;
+    // }
+    // if($user->staff){
+    // return 1;
+    // }
+    if ($user->hasPerm('Pluf::owner')) {
         return 2;
     }
-    if($user->hasPerm('Pluf::member')){
+    if ($user->hasPerm('Pluf::member')) {
         return 3;
     }
-    if($user->hasPerm('Pluf::authorized')){
+    if ($user->hasPerm('Pluf::authorized')) {
         return 4;
     }
 }
 
-function Monitor_Shortcuts_BeansToPrometheus($beans, $request, $match){
+function Monitor_Shortcuts_BeansToPrometheus($beans, $request, $match)
+{
     $result = '';
-    foreach($beans['items'] as $bean){
+    foreach ($beans['items'] as $bean) {
         $value = $bean->invoke($request);
-        if($value['type']!=='scaler'){
+        if ($value['type'] !== 'scaler') {
             continue;
         }
-        $result = $result . Monitor_Shortcuts_BeansToPrometheusLabel($bean, $request, $match) . " " . ($value['value']? $value['value']:'0') . PHP_EOL;
+        $result = $result . Monitor_Shortcuts_BeansToPrometheusLabel($bean, $request, $match) . " " . ($value['value'] ? $value['value'] : '0') . PHP_EOL;
     }
     return new Pluf_HTTP_Response($result, 'text/plain');
 }
 
 /**
- * 
- * @param Pluf_Monitor $bean
+ *
+ * @param Monitor $bean
  */
-function Monitor_Shortcuts_BeansToPrometheusLabel($bean){
+function Monitor_Shortcuts_BeansToPrometheusLabel($bean)
+{
     $labels = $bean->jsonSerialize();
     $monitor = new Monitor($bean->monitor);
-    $result = $monitor->name.'_'.$bean->name.'_ {';
-    foreach ($labels as $key => $value){
-        $result = $result . $key . '="'. $value . '",';
+    $result = $monitor->name . '_' . $bean->name . '_ {';
+    foreach ($labels as $key => $value) {
+        $result = $result . $key . '="' . $value . '",';
     }
-    return $result.'} ';
+    return $result . '} ';
 }
