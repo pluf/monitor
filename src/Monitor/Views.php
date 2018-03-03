@@ -16,7 +16,62 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
+Pluf::loadFunction('Monitor_Shortcuts_UserLevel');
+Pluf::loadFunction('Monitor_Shortcuts_BeansToPrometheus');
+
 class Monitor_Views
 {
 
+    /**
+     *
+     * @param Pluf_HTTP_Request $request
+     * @param array $match
+     * @return unknown
+     */
+    public function find($request, $match)
+    {
+        $content = new Pluf_Paginator(new Monitor());
+        $sql = new Pluf_SQL();
+        if (key_exists('_px_format', $request->REQUEST)) {
+            switch ($request->REQUEST['_px_format']) {
+                case 'text/prometheus':
+                    break;
+                default:
+                    $content->model_view = 'beans';
+            }
+        }
+        $content->list_filters = array(
+            'id',
+            'name',
+            'title'
+        );
+        $search_fields = array(
+            'title',
+            'description',
+            'monitor',
+            'name'
+        );
+        $sort_fields = array(
+            'id',
+            'name',
+            'title',
+            'monitor',
+            'creation_date',
+            'modif_dtime'
+        );
+        $content->sort_order = array(
+            'id',
+            'DESC'
+        );
+        $content->configure(array(), $search_fields, $sort_fields);
+        $content->setFromRequest($request);
+        if (key_exists('_px_format', $request->REQUEST)) {
+            switch ($request->REQUEST['_px_format']) {
+                case 'text/prometheus':
+                    return Monitor_Shortcuts_BeansToPrometheus($content->render_object(), $request, $match);
+            }
+        }
+        return $content->render_object();
+    }
 }

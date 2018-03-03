@@ -20,7 +20,7 @@ return array(
     // Monitor
     array(
         'regex' => '#^/find$#',
-        'model' => 'Monitor_Views_Monitor',
+        'model' => 'Monitor_Views',
         'method' => 'find',
         'http-method' => 'GET'
     ),

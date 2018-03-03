@@ -40,7 +40,7 @@ class Monitor_Property extends Pluf_Model
                 'size' => 50,
                 'editable' => true,
                 'readable' => true
-            )
+            ),
             'description' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => true,
@@ -51,7 +51,9 @@ class Monitor_Property extends Pluf_Model
             'function' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => true,
-                'size' => 100
+                'size' => 100,
+                'editable' => false,
+                'readable' => false
             ),
             'creation_dtime' => array(
                 'type' => 'Pluf_DB_Field_Datetime',

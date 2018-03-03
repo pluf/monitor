@@ -64,7 +64,7 @@ class Monitor extends Pluf_Model
         
         $this->_a['idx'] = array(
             'monitor_idx' => array(
-                'col' => 'bean, property',
+                'col' => 'name',
                 'type' => 'unique', // normal, unique, fulltext, spatial
                 'index_type' => '', // hash, btree
                 'index_option' => '',

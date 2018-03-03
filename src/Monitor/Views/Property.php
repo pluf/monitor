@@ -22,70 +22,65 @@ Pluf::loadFunction('Monitor_Shortcuts_UserLevel');
 class Monitor_Views_Property
 {
 
-
-    public function find ($request, $match)
+    public function find($request, $match)
     {
-        $content = new Pluf_Paginator(new Monitor_Monitor());
-        $sql = new Pluf_SQL('bean=%s AND level>=%s', 
-                array(
-                        $match['monitor'],
-                        Monitor_Shortcuts_UserLevel($request)
-                ));
+        // find monitor:
+        $content = new Pluf_Paginator(new Monitor_Property());
+        $sql = new Pluf_SQL('monitor=%s', array(
+            $match['monitor']
+        ));
         $content->forced_where = $sql;
-        $content->model_view = 'properties';
         $content->list_filters = array(
-                'bean',
-                'property',
-                'title'
-        );
-        $list_display = array(
-                'title' => __('title'),
-                'bean' => __('bean name'),
-                'property' => __('property'),
-                'description' => __('description')
+            'id',
+            'monitor',
+            'name',
+            'title'
         );
         $search_fields = array(
-                'title',
-                'description',
-                'bean',
-                'property'
+            'title',
+            'description',
+            'name'
         );
         $sort_fields = array(
-                'id',
-                'name',
-                'title',
-                'bean',
-                'property',
-                'creation_date',
-                'modif_dtime'
+            'id',
+            'name',
+            'title',
+            'monitor',
+            'creation_date',
+            'modif_dtime'
         );
-        $content->sort_order = array('id', 'DESC');
-        $content->configure($list_display, $search_fields, $sort_fields);
+        $content->sort_order = array(
+            'id',
+            'DESC'
+        );
+        $content->configure(array(), $search_fields, $sort_fields);
         $content->setFromRequest($request);
         return $content->render_object();
     }
 
-    public static function get ($request, $match)
+    public static function get($request, $match)
     {
-        if (! isset($match['monitor'])) {
-            throw new Exception(
-                    'The monitor was not provided in the parameters.');
+        // Find monitor
+        if (isset($match['monitorId'])) {
+            $monitorId = $match['monitorId'];
+        } else if (isset($match['monitor'])) {
+            $monitor = Pluf::factory('Monitor')->getOne('name=' . $match['monitor']);
+            $monitorId = $monitor->id;
         }
-        if (! isset($match['property'])) {
-            throw new Exception(
-                    'The property was not provided in the parameters.');
+        
+        // Find property
+        if (isset($match['propertyId'])) {
+            $property = new Monitor_Property($match['propertyId']);
+        } else if (isset($match['property'])) {
+            if(!isset($monitorId)) {
+                throw new Exception('The monitor was not provided in the parameters.');
+            }
+            $property = Pluf::factory('Monitor_Property')->getOne(
+                'name=' . $match['property'] . 'AND monitor=' . $monitorId);
+        } else {
+            throw new Exception('The property was not provided in the parameters.');
         }
         // Set the default
-        $sql = new Pluf_SQL('bean=%s AND property=%s', 
-                array(
-                        $match['monitor'],
-                        $match['property']
-                ));
-        $model = new Pluf_Monitor();
-        $model = $model->getOne(
-                array(
-                        'filter' => $sql->gen()
-                ));
-        return $model->invoke($request, $match);
+        return $property->invoke($request, $match);
     }
 }

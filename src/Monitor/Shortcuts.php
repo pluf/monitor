@@ -64,7 +64,8 @@ function Monitor_Shortcuts_BeansToPrometheus($beans, $request, $match){
  */
 function Monitor_Shortcuts_BeansToPrometheusLabel($bean){
     $labels = $bean->jsonSerialize();
-    $result = $bean->bean.'_'.$bean->property.'_ {';
+    $monitor = new Monitor($bean->monitor);
+    $result = $monitor->name.'_'.$bean->name.'_ {';
     foreach ($labels as $key => $value){
         $result = $result . $key . '="'. $value . '",';
     }
