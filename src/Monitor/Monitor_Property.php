@@ -93,28 +93,28 @@ class Monitor_Property extends Pluf_Model
         $this->_a['views'] = array(
             'all' => array(
                 'select' => $this->getSelect()
-            ),
-//             'beans' => array(
-//                 'select' => 'bean AS bean_id, title, description, level',
-//                 'group' => 'bean',
-//                 'props' => array(
-//                     'bean_id' => 'id'
-//                 )
-//             ),
-//             'properties' => array(
-//                 'select' => 'property AS property_id, title, description, level',
-//                 'props' => array(
-//                     'property_id' => 'id'
-//                 )
-//             )
+            )
+            // 'beans' => array(
+            // 'select' => 'bean AS bean_id, title, description, level',
+            // 'group' => 'bean',
+            // 'props' => array(
+            // 'bean_id' => 'id'
+            // )
+            // ),
+            // 'properties' => array(
+            // 'select' => 'property AS property_id, title, description, level',
+            // 'props' => array(
+            // 'property_id' => 'id'
+            // )
+            // )
         );
     }
 
     /**
-     * فراخوانی مانیتور
+     * Call monitor property and get value
      *
-     * @param unknown $params
-     * @return unknown
+     * @param Pluf_HTTP_Request $params
+     * @return object
      */
     function invoke($request, $match = array())
     {
@@ -126,10 +126,9 @@ class Monitor_Property extends Pluf_Model
     }
 
     /**
-     * پیش ذخیره را انجام می‌دهد
      *
-     * @param $create حالت
-     *            ساخت یا به روز رسانی را تعیین می‌کند
+     * {@inheritdoc}
+     * @see Pluf_Model::preSave()
      */
     function preSave($create = false)
     {
@@ -137,5 +136,26 @@ class Monitor_Property extends Pluf_Model
             $this->creation_dtime = gmdate('Y-m-d H:i:s');
         }
         $this->modif_dtime = gmdate('Y-m-d H:i:s');
+    }
+
+    /**
+     * This function is used to load data in installation process.
+     * Data must
+     * contains monitor name.
+     *
+     * @param array $data
+     */
+    function initFromFormData($data)
+    {
+        $this->setFromFormData($data);
+        $monitor = new Monitor();
+        $monitor = $monitor->getOne('name=' . $data['monitor']);
+        if(!isset($monitor) || $monitor->isAnonymous()){
+            $monitor->name =  $data['name'];
+            if(!$monitor->create()){
+                throw new Pluf_Exception('Fail to create monitor');
+            }
+        }
+        $this->monitor = $monitor;
     }
 }
