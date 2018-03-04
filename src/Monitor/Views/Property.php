@@ -22,14 +22,24 @@ Pluf::loadFunction('Monitor_Shortcuts_UserLevel');
 class Monitor_Views_Property
 {
 
+    /**
+     * Find monitor-properties. If monitor is specified in $match (through name or id of manitor)
+     * it works on list of properties of specified monitor else works on all monitor properties.
+     * @param Pluf_Http_Request $request
+     * @param array $match
+     * @return unknown
+     */
     public function find($request, $match)
     {
         // find monitor:
         $content = new Pluf_Paginator(new Monitor_Property());
-        $sql = new Pluf_SQL('monitor=%s', array(
-            $match['monitor']
-        ));
-        $content->forced_where = $sql;
+        $monitorId = Monitor_Views_Property::fetchMonitorId($match);
+        if ($monitorId) {
+            $sql = new Pluf_SQL('monitor=%s', array(
+                $monitorId
+            ));
+            $content->forced_where = $sql;
+        }
         $content->list_filters = array(
             'id',
             'monitor',
@@ -57,10 +67,16 @@ class Monitor_Views_Property
         $content->setFromRequest($request);
         return $content->render_object();
     }
+    
+    /**
+     * Returns monitor id from given information in $match. $match may contain id or name of monitor.
+     * @param array $match
+     * @return NULL|Number
+     */
 
-    public static function get($request, $match)
+    private static function fetchMonitorId($match)
     {
-        // Find monitor
+        $monitorId = null;
         if (isset($match['monitorId'])) {
             $monitorId = $match['monitorId'];
         } else if (isset($match['monitor'])) {
@@ -69,17 +85,32 @@ class Monitor_Views_Property
             ));
             $monitor = new Monitor();
             $monitor = $monitor->getOne($sql->gen());
-            if(!$monitor){
-                throw new Pluf_Exception_DoesNotExist('Monitor not found :' . $match['monitor']);
+            if (! $monitor) {
+                return null;
             }
             $monitorId = $monitor->id;
         }
+        return $monitorId;
+    }
+
+    /**
+     * Returns a monitor property. You could give property id in the $match or give monitor (by name or id) and property name
+     * in the $match to get information of monitor property
+     * @param unknown $request
+     * @param unknown $match
+     * @throws Exception
+     * @return array
+     */
+    public static function get($request, $match)
+    {
+        // Find monitor
+        $monitorId = Monitor_Views_Property::fetchMonitorId($match);
         
         // Find property
         if (isset($match['propertyId'])) {
             $property = new Monitor_Property($match['propertyId']);
         } else if (isset($match['property'])) {
-            if(!isset($monitorId)) {
+            if (! isset($monitorId)) {
                 throw new Exception('The monitor was not provided in the parameters.');
             }
             $sql = new Pluf_SQL('name=%s AND monitor=%s', array(
@@ -92,7 +123,7 @@ class Monitor_Views_Property
         }
         // Set the default
         $result = $property->invoke($request, $match);
-        $result = array_merge($property->jsonSerialize(), $result);
+        $result = array_merge($property->jsonSerialize(), array('value' => $result));
         return $result;
     }
 }

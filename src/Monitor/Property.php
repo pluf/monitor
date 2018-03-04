@@ -52,6 +52,8 @@ class Monitor_Property extends Pluf_Model
             'value' => array(
                 'type' => 'Pluf_DB_Field_Float',
                 'blank' => true,
+                'is_null' => true,
+                'default' => 0.0,
                 'editable' => false,
                 'readable' => true
             ),
