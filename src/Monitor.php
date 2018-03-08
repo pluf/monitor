@@ -28,6 +28,7 @@ class Monitor extends Pluf_Model
             'name' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
                 'blank' => false,
+                'is_null' => false,
                 'size' => 100,
                 'verbose' => __('property name'),
                 'help_text' => __('The property name must be unique for each application.'),
@@ -72,19 +73,12 @@ class Monitor extends Pluf_Model
                 'lock_option' => ''
             )
         );
-        
-//         $this->_a['views'] = array(
-//             'all' => array(
-//                 'select' => $this->getSelect()
-//             )
-//         );
     }
 
     /**
-     * پیش ذخیره را انجام می‌دهد
      *
-     * @param $create حالت
-     *            ساخت یا به روز رسانی را تعیین می‌کند
+     * {@inheritdoc}
+     * @see Pluf_Model::preSave()
      */
     function preSave($create = false)
     {

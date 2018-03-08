@@ -27,7 +27,7 @@ class Monitor_Views
      *
      * @param Pluf_HTTP_Request $request
      * @param array $match
-     * @return unknown
+     * @return Pluf_Paginator
      */
     public function find($request, $match)
     {
