@@ -37,7 +37,19 @@ return array(
         'http-method' => 'GET'
     ),
     array(
+        'regex' => '#^/(?P<monitorId>\d+)/property/(?P<propertyId>\d+)$#',
+        'model' => 'Monitor_Views_Property',
+        'method' => 'get',
+        'http-method' => 'GET'
+    ),
+    array(
         'regex' => '#^/(?P<monitorId>\d+)/property/(?P<property>[^/]+)$#',
+        'model' => 'Monitor_Views_Property',
+        'method' => 'get',
+        'http-method' => 'GET'
+    ),
+    array(
+        'regex' => '#^/(?P<monitor>[^/]+)/property/(?P<propertyId>\d+)$#',
         'model' => 'Monitor_Views_Property',
         'method' => 'get',
         'http-method' => 'GET'
