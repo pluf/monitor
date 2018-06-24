@@ -123,7 +123,7 @@ class Monitor_Property extends Pluf_Model
             $diff = $now->getTimestamp() - $last->getTimestamp();
             $interval = $this->interval;
             if($interval == null || $interval == 'undefined'){
-                $interval = 3600;
+                $interval = 3600000;
             }
             if ($diff <= $interval) {
                 return;
