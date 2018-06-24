@@ -47,7 +47,29 @@ function Monitor_Shortcuts_UserLevel($request)
     }
 }
 
+/**
+ * Converts beans into a Prometheus respons
+ * 
+ * @param Monitor[] $beans
+ * @param Pluf_HTTP_Request $request
+ * @param array $match
+ * @return Pluf_HTTP_Response
+ */
 function Monitor_Shortcuts_BeansToPrometheus($beans, $request, $match)
+{
+    return Monitor_Shortcuts_BeanPropertiesToPrometheus($beans, $request, $match);
+//     $result = '';
+//     foreach ($beans['items'] as $bean) {
+//         $value = $bean->invoke($request);
+//         if ($value['type'] !== 'scaler') {
+//             continue;
+//         }
+//         $result = $result . Monitor_Shortcuts_BeansToPrometheusLabel($bean, $request, $match) . " " . ($value['value'] ? $value['value'] : '0') . PHP_EOL;
+//     }
+//     return new Pluf_HTTP_Response($result, 'text/plain');
+}
+
+function Monitor_Shortcuts_BeanPropertiesToPrometheus($beans, $request, $match)
 {
     $result = '';
     foreach ($beans['items'] as $bean) {
