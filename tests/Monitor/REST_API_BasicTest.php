@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 require_once 'Pluf.php';
 
 /**
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
@@ -31,6 +32,7 @@ class Monitor_REST_API_BasicTest extends TestCase
     private static $user = null;
 
     /**
+     *
      * @beforeClass
      */
     public static function createDataBase()
@@ -39,7 +41,7 @@ class Monitor_REST_API_BasicTest extends TestCase
         $m = new Pluf_Migration(Pluf::f('installed_apps'));
         $m->install();
         $m->init();
-        
+
         $user = new User();
         $user->login = 'test';
         $user->first_name = 'test';
@@ -51,10 +53,10 @@ class Monitor_REST_API_BasicTest extends TestCase
         if (true !== $user->create()) {
             throw new Exception();
         }
-        
+
         $role = Role::getFromString('Pluf.owner');
         $user->setAssoc($role);
-        
+
         self::$client = new Test_Client(array(
             array(
                 'app' => 'Monitor',
@@ -72,6 +74,7 @@ class Monitor_REST_API_BasicTest extends TestCase
     }
 
     /**
+     *
      * @afterClass
      */
     public static function removeDatabses()
@@ -81,6 +84,7 @@ class Monitor_REST_API_BasicTest extends TestCase
     }
 
     /**
+     *
      * @test
      */
     public function getListOfMonitors()
@@ -91,15 +95,17 @@ class Monitor_REST_API_BasicTest extends TestCase
             'password' => 'admin'
         ));
         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
-        
+
         $response = self::$client->get('/api/monitor/find');
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
         Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
         Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
         Test_Assert::assertResponseNonEmptyPaginateList($response, 'Monitor list is empty?!');
     }
-    
+
     /**
+     * Getting owner monitor as sample
+     *
      * @test
      */
     public function getOwnerMonitor()
@@ -110,10 +116,32 @@ class Monitor_REST_API_BasicTest extends TestCase
             'password' => 'admin'
         ));
         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
-        
+
         $response = self::$client->get('/api/monitor/user/property/owner');
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
         Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
         Test_Assert::assertResponseAsModel($response, 'Is not a valid model');
+    }
+
+    /**
+     * Getting owner monitor as sample
+     *
+     * @test
+     */
+    public function getOwnerMonitorForPromethues()
+    {
+        // login
+        $response = self::$client->post('/api/user/login', array(
+            'login' => 'admin',
+            'password' => 'admin'
+        ));
+        Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
+
+        $response = self::$client->get('/api/monitor/user/property/owner', array(
+            '_px_format' => 'text/prometheus'
+        ));
+        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
+        Test_Assert::assertStringNotMatchesFormat('\{.*\}',$response->content, 'Monitor model is a model?!');
+        Test_Assert::assertFalse(!strpbrk($response->content, 'user_owner'), 'Response content is not a valid prometheus');
     }
 }

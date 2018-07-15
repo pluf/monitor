@@ -23,6 +23,12 @@ Pluf::loadFunction('Monitor_Shortcuts_BeansToPrometheus');
 class Monitor_Views
 {
 
+    public const PX_FORMAT_KEY = '_px_format';
+
+    public const PX_FORMAT_PROMETHEUS = 'text/prometheus';
+
+    public const PX_FORMAT_INFLUXDB = 'text/influxdb';
+
     /**
      *
      * @param Pluf_HTTP_Request $request
@@ -32,10 +38,10 @@ class Monitor_Views
     public function find($request, $match)
     {
         $content = new Pluf_Paginator(new Monitor());
-        $sql = new Pluf_SQL();
-        if (key_exists('_px_format', $request->REQUEST)) {
-            switch ($request->REQUEST['_px_format']) {
-                case 'text/prometheus':
+        if (key_exists(self::PX_FORMAT_KEY, $request->REQUEST)) {
+            switch ($request->REQUEST[self::PX_FORMAT_KEY]) {
+                case self::PX_FORMAT_PROMETHEUS:
+                case self::PX_FORMAT_INFLUXDB:
                     break;
                 default:
                     $content->model_view = 'beans';
@@ -66,10 +72,14 @@ class Monitor_Views
         );
         $content->configure(array(), $search_fields, $sort_fields);
         $content->setFromRequest($request);
-        if (key_exists('_px_format', $request->REQUEST)) {
-            switch ($request->REQUEST['_px_format']) {
-                case 'text/prometheus':
+        if (key_exists(self::PX_FORMAT_KEY, $request->REQUEST)) {
+            switch ($request->REQUEST[self::PX_FORMAT_KEY]) {
+                case self::PX_FORMAT_PROMETHEUS:
                     return Monitor_Shortcuts_BeansToPrometheus($content->render_object(), $request, $match);
+                case self::PX_FORMAT_INFLUXDB:
+                    break;
+                default:
+                    break;
             }
         }
         return $content->render_object();
