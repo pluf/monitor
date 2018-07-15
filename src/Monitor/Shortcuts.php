@@ -18,6 +18,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+
+
+
+
+
+
+
 /**
  *
  * @param Pluf_HTTP_Request $request
@@ -38,6 +46,24 @@ function Monitor_Shortcuts_convertBeanPropertyToResponse($request, $match, $prop
     return $property;
 }
 
+function Monitor_Shortcuts_convertBeanPageResponse($request, $page)
+{
+    $result = '';
+    foreach ($page['items'] as $bean) {
+        $result = $result . Monitor_Shortcuts_BeanPropertiesToPrometheus($request, $bean);
+    }
+    return new Pluf_HTTP_Response($result, 'text/plain');
+}
+
+
+
+
+
+
+
+
+
+//************************************************************* private *******************
 /**
  * Return monitor level
  *
@@ -72,31 +98,18 @@ function Monitor_Shortcuts_UserLevel($request)
  */
 function Monitor_Shortcuts_BeansToPrometheus($beans, $request, $match)
 {
-    // XXX: maso, 2014: get properites
-    // $result = '';
-    // foreach ($beans['items'] as $bean) {
-    // $properties = $bean->get_
-    // $value = $bean->invoke($request);
-    // if ($value['type'] !== 'scaler') {
-    // continue;
-    // }
-    // $result = $result . Monitor_Shortcuts_BeansToPrometheusLabel($bean, $request, $match) . " " . ($value['value'] ? $value['value'] : '0') . PHP_EOL;
-    // }
-    // return new Pluf_HTTP_Response($result, 'text/plain');
     return Monitor_Shortcuts_BeanPropertiesToPrometheus($beans, $request, $match);
 }
 
-function Monitor_Shortcuts_BeanPropertiesToPrometheus($beans, $request, $match)
+function Monitor_Shortcuts_BeanPropertiesToPrometheus($request, $bean)
 {
+    $properties = $bean->get_properties_list();
     $result = '';
-    foreach ($beans['items'] as $bean) {
-        $value = $bean->invoke($request);
-        if ($value['type'] !== 'scaler') {
-            continue;
-        }
-        $result = $result . Monitor_SHortcuts_BeanPropertyToPrometheusFormat($bean, $value);
+    foreach ($properties as $property) {
+        $value = $property->invoke($request);
+        $result = $result . Monitor_SHortcuts_BeanPropertyToPrometheusFormat($property, $value);
     }
-    return new Pluf_HTTP_Response($result, 'text/plain');
+    return $result;
 }
 
 /**
@@ -110,7 +123,7 @@ function Monitor_Shortcuts_BeansToPrometheusLabel($bean)
     $monitor = new Monitor($bean->monitor);
     $result = $monitor->name . '_' . $bean->name . '_ {';
     foreach ($labels as $key => $value) {
-        if($key == 'value' || $key == 'modif_dtime'){
+        if ($key == 'value' || $key == 'modif_dtime') {
             continue;
         }
         $result = $result . $key . '="' . $value . '",';
@@ -127,5 +140,5 @@ function Monitor_Shortcuts_BeansToPrometheusLabel($bean)
  */
 function Monitor_SHortcuts_BeanPropertyToPrometheusFormat($property, $value)
 {
-    return Monitor_Shortcuts_BeansToPrometheusLabel($property) . " " . ($value->value ? $value->value : '0') . PHP_EOL;
+    return Monitor_Shortcuts_BeansToPrometheusLabel($property) . " " . ($value ? $value : '0') . PHP_EOL;
 }

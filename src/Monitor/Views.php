@@ -75,7 +75,7 @@ class Monitor_Views
         if (key_exists(self::PX_FORMAT_KEY, $request->REQUEST)) {
             switch ($request->REQUEST[self::PX_FORMAT_KEY]) {
                 case self::PX_FORMAT_PROMETHEUS:
-                    return Monitor_Shortcuts_BeansToPrometheus($content->render_object(), $request, $match);
+                    return Monitor_Shortcuts_convertBeanPageResponse($request, $content->render_object());
                 case self::PX_FORMAT_INFLUXDB:
                     break;
                 default:

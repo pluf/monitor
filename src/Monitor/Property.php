@@ -90,7 +90,7 @@ class Monitor_Property extends Pluf_Model
                 'model' => 'Monitor',
                 'blank' => false,
                 'is_null' => false,
-                'relate_name' => 'monitor',
+                'relate_name' => 'properties',
                 'editable' => false,
                 'readable' => true
             )
@@ -126,7 +126,7 @@ class Monitor_Property extends Pluf_Model
                 $interval = 3600000;
             }
             if ($diff <= $interval) {
-                return $this;
+                return $this->value;
             }
         }
         // Get new value
@@ -139,7 +139,7 @@ class Monitor_Property extends Pluf_Model
         if ($this->cacheable && ! $this->update()) {
             throw new Pluf_Exception('Fail to update model');
         }
-        return $this;
+        return $this->value;
     }
 
     /**
