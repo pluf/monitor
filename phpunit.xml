@@ -4,9 +4,9 @@
 		<testsuite name="Monitor">
 			<directory>tests/Monitor/</directory>
 		</testsuite>
-<!-- 		<testsuite name="Property"> -->
-<!-- 			<directory>tests/Property/</directory> -->
-<!-- 		</testsuite> -->
+		<testsuite name="Property">
+			<directory>tests/Property/</directory>
+		</testsuite>
 	</testsuites>
 
 	<!-- Code coverage -->
