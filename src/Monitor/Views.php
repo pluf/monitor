@@ -23,11 +23,11 @@ Pluf::loadFunction('Monitor_Shortcuts_BeansToPrometheus');
 class Monitor_Views
 {
 
-    public const PX_FORMAT_KEY = '_px_format';
+    const PX_FORMAT_KEY = '_px_format';
 
-    public const PX_FORMAT_PROMETHEUS = 'text/prometheus';
+    const PX_FORMAT_PROMETHEUS = 'text/prometheus';
 
-    public const PX_FORMAT_INFLUXDB = 'text/influxdb';
+    const PX_FORMAT_INFLUXDB = 'text/influxdb';
 
     /**
      *
