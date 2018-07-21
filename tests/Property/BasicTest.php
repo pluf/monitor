@@ -37,6 +37,7 @@ class Property_BasicTest extends TestCase
             'Test'
         )));
         $m->install();
+        $m->init();
     }
 
     /**
@@ -87,6 +88,7 @@ class Property_BasicTest extends TestCase
         ));
         $property->create();
         
+        $result = $property->invoke(array(), array());
         $result = $property->invoke(array(), array());
         Test_Assert::assertEquals($result, $property->invoke(array(), array()));
         Test_Assert::assertEquals($result, $property->invoke(array(), array()));
