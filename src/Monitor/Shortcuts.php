@@ -18,14 +18,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-
-
-
-
-
-
 /**
  *
  * @param Pluf_HTTP_Request $request
@@ -35,9 +27,9 @@
  */
 function Monitor_Shortcuts_convertBeanPropertyToResponse($request, $match, $property)
 {
+    $value = $property->invoke($request, $match);
     // User defined format
     if (array_key_exists('_px_format', $request->REQUEST) && 'text/prometheus' == $request->REQUEST['_px_format']) {
-        $value = $property->invoke($request, $match);
         $result = Monitor_SHortcuts_BeanPropertyToPrometheusFormat($property, $value);
         return new Pluf_HTTP_Response($result, 'text/plain');
     }
@@ -55,15 +47,7 @@ function Monitor_Shortcuts_convertBeanPageResponse($request, $page)
     return new Pluf_HTTP_Response($result, 'text/plain');
 }
 
-
-
-
-
-
-
-
-
-//************************************************************* private *******************
+// ************************************************************* private *******************
 /**
  * Return monitor level
  *
