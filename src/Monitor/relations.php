@@ -17,9 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 return array(
-    'Monitor_Property' => array(
-        'relate_to' => array(
-            'Monitor'
-        )
+    'Monitor_Tag' => array(
+        'relate_to_many' => array(
+            'Monitor_Metric'
+        ),
     ),
 );
