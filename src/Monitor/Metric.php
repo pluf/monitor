@@ -7,7 +7,7 @@
  * @author hadi <mohammad.hadi.mansouri@dpq.co.ir>
  *
  */
-class Monitor_Property extends Pluf_Model
+class Monitor_Metric extends Pluf_Model
 {
 
     /**
@@ -17,7 +17,7 @@ class Monitor_Property extends Pluf_Model
      */
     function init()
     {
-        $this->_a['table'] = 'monitor_property';
+        $this->_a['table'] = 'monitor_metrics';
         $this->_a['cols'] = array(
             'id' => array(
                 'type' => 'Pluf_DB_Field_Sequence',
@@ -27,31 +27,22 @@ class Monitor_Property extends Pluf_Model
             ),
             'name' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
-                'blank' => false,
+                'is_null' => false,
                 'size' => 100,
-                'verbose' => __('property name'),
-                'help_text' => __('The property name must be unique for each application.'),
+                'unique' => true,
                 'editable' => false,
                 'readable' => true
             ),
             'description' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
-                'blank' => true,
+                'is_null' => true,
                 'size' => 250,
                 'editable' => true,
                 'readable' => true
             ),
-            'function' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
-                'blank' => true,
-                'size' => 100,
-                'editable' => false,
-                'readable' => false
-            ),
-            
             'value' => array(
                 'type' => 'Pluf_DB_Field_Float',
-                'blank' => true,
+                'is_null' => true,
                 'is_null' => true,
                 'default' => 0.0,
                 'editable' => false,
@@ -59,51 +50,57 @@ class Monitor_Property extends Pluf_Model
             ),
             'unit' => array(
                 'type' => 'Pluf_DB_Field_Varchar',
-                'blank' => true,
+                'is_null' => true,
                 'size' => 100,
                 'editable' => false,
                 'readable' => true
             ),
+            
+            'function' => array(
+                'type' => 'Pluf_DB_Field_Varchar',
+                'is_null' => true,
+                'size' => 100,
+                'editable' => false,
+                'readable' => false
+            ),
             'interval' => array(
                 'type' => 'Pluf_DB_Field_Integer',
-                'blank' => true,
+                'is_null' => true,
                 'editable' => false,
                 'readable' => false
             ),
             'cacheable' => array(
                 'type' => 'Pluf_DB_Field_Boolean',
-                'blank' => true,
+                'is_null' => true,
                 'defualt' => false,
                 'editable' => false,
                 'readable' => false
             ),
-            
             'modif_dtime' => array(
                 'type' => 'Pluf_DB_Field_Datetime',
-                'blank' => true,
+                'is_null' => true,
                 'editable' => false,
                 'readable' => true
             ),
             // Relations
-            'monitor' => array(
-                'type' => 'Pluf_DB_Field_Foreignkey',
-                'model' => 'Monitor',
-                'blank' => false,
-                'is_null' => false,
-                'relate_name' => 'properties',
-                'editable' => false,
-                'readable' => true
-            )
+//             'monitor' => array(
+//                 'type' => 'Pluf_DB_Field_Foreignkey',
+//                 'model' => 'Monitor',
+//                 'is_null' => false,
+//                 'is_null' => false,
+//                 'relate_name' => 'properties',
+//                 'editable' => false,
+//                 'readable' => true
+//             )
         );
         
-        $this->_a['idx'] = array(
-            'monitor_idx' => array(
-                'col' => 'monitor, name',
-                'type' => 'unique', // normal, unique, fulltext, spatial
-                'index_type' => '', // hash, btree
-                'index_option' => '',
-                'algorithm_option' => '',
-                'lock_option' => ''
+        // Assoc. table
+        $tag_asso = $this->_con->pfx . Pluf_Shortcuts_GetAssociationTableName('Monitor_Tag', 'Monitor_Metric');
+        $t_metric = $this->_con->pfx . $this->_a['table'];
+        $metric_fk = Pluf_Shortcuts_GetForeignKeyName('Monitor_Metric');
+        $this->_a['views'] = array(
+            'join_tag' => array(
+                'join' => 'LEFT JOIN ' . $tag_asso . ' ON ' . $t_metric . '.id=' . $metric_fk
             )
         );
     }
@@ -111,10 +108,9 @@ class Monitor_Property extends Pluf_Model
     /**
      * Call monitor property and get value
      *
-     * @param Pluf_HTTP_Request $params
      * @return object
      */
-    function invoke($request, $match = array())
+    function invoke()
     {
         // Get old value
         if ($this->cacheable) {
@@ -130,7 +126,14 @@ class Monitor_Property extends Pluf_Model
             }
         }
         // Get new value
-        $match['property'] = $this->name;
+        $request = null;
+        if(array_key_exists('_PX_request', $GLOBALS)){
+            $request = $GLOBALS['_PX_request'];
+        }
+        $match = array(
+            'property' => $this->name,
+            'metricName' => $this->name
+        );
         $result = call_user_func_array(explode('::', $this->function), array(
             $request,
             $match
@@ -152,28 +155,30 @@ class Monitor_Property extends Pluf_Model
         $this->modif_dtime = gmdate('Y-m-d H:i:s');
     }
 
-    /**
-     * This function is used to load data in installation process.
-     * Data must
-     * contains monitor name.
-     *
-     * @param array $data
-     */
-    function initFromFormData($data)
-    {
-        $this->setFromFormData($data);
-        $monitor = new Monitor();
-        $sql = new Pluf_SQL('name=%s', array(
-            $data['monitor']
-        ));
-        $monitor = $monitor->getOne($sql->gen());
-        if (! isset($monitor) || $monitor->isAnonymous()) {
-            $monitor = new Monitor();
-            $monitor->name = $data['monitor'];
-            if (! $monitor->create()) {
-                throw new Pluf_Exception('Fail to create monitor');
-            }
-        }
-        $this->monitor = $monitor;
+    function restore(){
+        $this->invoke();
     }
+    
+//     /**
+//      * This function is used to load data in installation process.
+//      * Data must contains monitor-tag name.
+//      *
+//      * @param array $data
+//      */
+//     function initFromFormData($data)
+//     {
+//         $this->setFromFormData($data);
+//         $monitorTag = new Monitor_Tag();
+//         $sql = new Pluf_SQL('name=%s', array(
+//             $data['tag']
+//         ));
+//         $monitorTag = $monitorTag->getOne($sql->gen());
+//         if (! isset($monitorTag) || $monitorTag->isAnonymous()) {
+//             $monitorTag = new Monitor_Tag();
+//             $monitorTag->name = $data['monitor'];
+//             if (! $monitorTag->create()) {
+//                 throw new Pluf_Exception('Fail to create monitor tag');
+//             }
+//         }
+//     }
 }

@@ -1,9 +1,9 @@
 {
 	"name": "Monitor",
-	"version": "0.2.0",
+	"version": "4.0.0",
 	"title": "Monitoring system",
 	"model": [
-		"Monitor",
-		"Monitor_Property"
+		"Monitor_Tag",
+		"Monitor_Metric"
 	]
 }
