@@ -20,7 +20,7 @@ return array(
     // ******************************************* Monitor tag
     array(
         'regex' => '#^/tags$#',
-        'model' => 'Monitor_Views',
+        'model' => 'Monitor_Views_Tag',
         'method' => 'find',
         'http-method' => 'GET'
     ),
@@ -35,39 +35,51 @@ return array(
         'precond' => array()
     ),
     // ******************************************* metrics of tag
+//     array(
+//         'regex' => '#^/tags/(?P<tagId>\d+)/metrics$#',
+//         'model' => 'Monitor_Views_Metric',
+//         'method' => 'find',
+//         'http-method' => 'GET'
+//     ),
+//     array(
+//         'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics$#',
+//         'model' => 'Monitor_Views_Metric',
+//         'method' => 'find',
+//         'http-method' => 'GET'
+//     ),
     array(
-        'regex' => '#^/tags/(?P<tagId>\d+)/metrics$#',
-        'model' => 'Monitor_Views_Property',
+        'regex' => '#^/tags/(?P<tag>[^/]+)/metrics$#',
+        'model' => 'Monitor_Views_Metric',
         'method' => 'find',
         'http-method' => 'GET'
     ),
+//     array(
+//         'regex' => '#^/tags/(?P<tagId>\d+)/metrics/(?P<metricId>\d+)$#',
+//         'model' => 'Monitor_Views_Metric',
+//         'method' => 'get',
+//         'http-method' => 'GET'
+//     ),
+//     array(
+//         'regex' => '#^/tags/(?P<tagId>\d+)/metrics/(?P<metricName>[^/]+)$#',
+//         'model' => 'Monitor_Views_Metric',
+//         'method' => 'get',
+//         'http-method' => 'GET'
+//     ),
+//     array(
+//         'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics/(?P<metricId>\d+)$#',
+//         'model' => 'Monitor_Views_Metric',
+//         'method' => 'get',
+//         'http-method' => 'GET'
+//     ),
+//     array(
+//         'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics/(?P<metricName>[^/]+)$#',
+//         'model' => 'Monitor_Views_Metric',
+//         'method' => 'get',
+//         'http-method' => 'GET'
+//     ),
     array(
-        'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics$#',
-        'model' => 'Monitor_Views_Property',
-        'method' => 'find',
-        'http-method' => 'GET'
-    ),
-    array(
-        'regex' => '#^/tags/(?P<tagId>\d+)/metrics/(?P<metricId>\d+)$#',
-        'model' => 'Monitor_Views_Property',
-        'method' => 'get',
-        'http-method' => 'GET'
-    ),
-    array(
-        'regex' => '#^/tags/(?P<tagId>\d+)/metrics/(?P<metricName>[^/]+)$#',
-        'model' => 'Monitor_Views_Property',
-        'method' => 'get',
-        'http-method' => 'GET'
-    ),
-    array(
-        'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics/(?P<metricId>\d+)$#',
-        'model' => 'Monitor_Views_Property',
-        'method' => 'get',
-        'http-method' => 'GET'
-    ),
-    array(
-        'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics/(?P<metricName>[^/]+)$#',
-        'model' => 'Monitor_Views_Property',
+        'regex' => '#^/tags/(?P<tag>[^/]+)/metrics/(?P<metric>[^/]+)$#',
+        'model' => 'Monitor_Views_Metric',
         'method' => 'get',
         'http-method' => 'GET'
     ),
@@ -86,15 +98,21 @@ return array(
             )
         )
     ),
+//     array(
+//         'regex' => '#^/metrics/(?P<metricId>\d+)$#',
+//         'model' => 'Monitor_Views_Metric',
+//         'method' => 'getMetric',
+//         'http-method' => 'GET'
+//     ),
+//     array(
+//         'regex' => '#^/metrics/(?P<metricName>[^/]+)$#',
+//         'model' => 'Monitor_Views_Metric',
+//         'method' => 'getMetric',
+//         'http-method' => 'GET'
+//     ),
     array(
-        'regex' => '#^/metrics/(?P<metricId>\d+)$#',
-        'model' => 'Monitor_Views_Property',
-        'method' => 'getMetric',
-        'http-method' => 'GET'
-    ),
-    array(
-        'regex' => '#^/metrics/(?P<metricName>[^/]+)$#',
-        'model' => 'Monitor_Views_Property',
+        'regex' => '#^/metrics/(?P<metric>[^/]+)$#',
+        'model' => 'Monitor_Views_Metric',
         'method' => 'getMetric',
         'http-method' => 'GET'
     ),
@@ -102,13 +120,13 @@ return array(
     // ******************************************* Old versions
     array(
         'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics$#',
-        'model' => 'Monitor_Views_Property',
+        'model' => 'Monitor_Views_Metric',
         'method' => 'find',
         'http-method' => 'GET'
     ),
     array(
         'regex' => '#^/(?P<tagName>[^/]+)/(?P<metricName>[^/]+)$#',
-        'model' => 'Monitor_Views_Property',
+        'model' => 'Monitor_Views_Metric',
         'method' => 'get',
         'http-method' => 'GET'
     )
