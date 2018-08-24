@@ -20,7 +20,7 @@ Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
 Pluf::loadFunction('Monitor_Shortcuts_UserLevel');
 Pluf::loadFunction('Monitor_Shortcuts_BeansToPrometheus');
 
-class Monitor_Views
+class Monitor_Views_Tag
 {
 
     const PX_FORMAT_KEY = '_px_format';
@@ -37,7 +37,7 @@ class Monitor_Views
      */
     public function find($request, $match)
     {
-        $content = new Pluf_Paginator(new Monitor());
+        $content = new Pluf_Paginator(new Monitor_Tag());
         if (key_exists(self::PX_FORMAT_KEY, $request->REQUEST)) {
             switch ($request->REQUEST[self::PX_FORMAT_KEY]) {
                 case self::PX_FORMAT_PROMETHEUS:
@@ -49,20 +49,15 @@ class Monitor_Views
         }
         $content->list_filters = array(
             'id',
-            'name',
-            'title'
+            'name'
         );
         $search_fields = array(
-            'title',
             'description',
-            'monitor',
             'name'
         );
         $sort_fields = array(
             'id',
             'name',
-            'title',
-            'monitor',
             'creation_date',
             'modif_dtime'
         );
@@ -82,6 +77,6 @@ class Monitor_Views
                     break;
             }
         }
-        return $content->render_object();
+        return $content;
     }
 }

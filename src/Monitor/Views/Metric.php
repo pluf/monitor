@@ -19,14 +19,14 @@
 Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
 Pluf::loadFunction('Monitor_Shortcuts_UserLevel');
 
-class Monitor_Views_Property
+class Monitor_Views_Metric
 {
 
     /**
-     * Find monitor-properties.
+     * Find monitor-metrics.
      *
-     * If monitor is specified in $match (through name or id of manitor)
-     * it works on list of properties of specified monitor else works on all monitor properties.
+     * If monitor-tag is specified in $match (through name or id of manitor-tag)
+     * it works on list of metrics with specified monitor-tag else works on all monitor-metrics.
      *
      * @param Pluf_Http_Request $request
      * @param array $match
@@ -35,30 +35,25 @@ class Monitor_Views_Property
     public function find($request, $match)
     {
         // find monitor:
-        $content = new Pluf_Paginator(new Monitor_Property());
-        $monitorId = Monitor_Views_Property::fetchMonitorId($match);
-        if ($monitorId) {
-            $sql = new Pluf_SQL('monitor=%s', array(
-                $monitorId
+        $content = new Pluf_Paginator(new Monitor_Metric());
+        $monitorTagId = self::fetchMonitorTagId($match);
+        if ($monitorTagId) {
+            $sql = new Pluf_SQL('monitor_tag_id=%s', array(
+                $monitorTagId
             ));
             $content->forced_where = $sql;
         }
         $content->list_filters = array(
             'id',
-            'monitor',
-            'name',
-            'title'
+            'name'
         );
         $search_fields = array(
-            'title',
             'description',
             'name'
         );
         $sort_fields = array(
             'id',
             'name',
-            'title',
-            'monitor',
             'creation_date',
             'modif_dtime'
         );
@@ -66,41 +61,108 @@ class Monitor_Views_Property
             'id',
             'DESC'
         );
+        $content->model_view = 'join_tag';
         $content->configure(array(), $search_fields, $sort_fields);
         $content->setFromRequest($request);
-        return $content->render_object();
+        return $content;
     }
 
     /**
-     * Returns monitor id from given information in $match.
-     * $match may contain id or name of monitor.
+     * Returns monitor-tag id from given information in $match.
+     * $match may contain id or name of monitor-tag.
+     *
+     * It checks following keys:
+     * - $match['tagId']: returns $match['tagId'] if exist.
+     * - $match['tagName']: returns id of a tag which its name is equal with $match['tagName'].
+     * - $match['tag']: If $match['tag'] is a number returns $match['tag'] as result
+     * else returns id of a tag which its name is equal with $match['tag'].
+     *
+     * If none of mentioned values are existed or there is no tag with given name returns null.
      *
      * @param array $match
      * @return NULL|Number
      */
-    private function fetchMonitorId($match)
+    private function fetchMonitorTagId($match)
     {
-        if (isset($match['monitorId'])) {
-            return $match['monitorId'];
+        // Check tagId key
+        if (isset($match['tagId'])) {
+            return $match['tagId'];
         }
-
-        if (isset($match['monitor'])) {
+        // Check tagName key
+        if (isset($match['tagName'])) {
             $sql = new Pluf_SQL('name=%s', array(
-                $match['monitor']
+                $match['tagName']
             ));
-            $monitor = new Monitor();
-            $monitor = $monitor->getOne($sql->gen());
-            if ($monitor) {
-                return $monitor->id;
+            $monitorTag = new Monitor_Tag();
+            $monitorTag = $monitorTag->getOne($sql->gen());
+            if ($monitorTag) {
+                return $monitorTag->id;
+            }
+        }
+        // Check tag key
+        if (isset($match['tag'])) {
+            $val = $match['tag'];
+            if (is_numeric($val)) {
+                return $val;
+            }
+            $sql = new Pluf_SQL('name=%s', array(
+                $val
+            ));
+            $monitorTag = new Monitor_Tag();
+            $monitorTag = $monitorTag->getOne($sql->gen());
+            if ($monitorTag) {
+                return $monitorTag->id;
             }
         }
         return null;
     }
 
     /**
-     * Returns a monitor property.
-     * You could give property id in the $match or give monitor (by name or id) and property name
-     * in the $match to get information of monitor property
+     * Returns monitor-metric by using given information in $match.
+     * $match may contains id or name of monitor-metric.
+     *
+     * It checks following keys:
+     * - $match['metricId']: returns metric with id $match['metricId'] if exist.
+     * - $match['metricName']: returns metric which its name is equal with $match['metricName'].
+     * - $match['metric']: If $match['metric'] is a number returns metric with id $match['metricId'] as result
+     * else returns metric which its name is equal with $match['metric'].
+     *
+     * If none of mentioned values are existed or there is no metric with given name returns null.
+     *
+     * @param array $match
+     * @return NULL|Monitor_Metric
+     */
+    private function fetchMetric($match)
+    {
+        $metric = null;
+        if (isset($match['metricId'])) {
+            $metric = new Monitor_Metric($match['metricId']);
+        }else if (isset($match['metricName'])) {
+            $sql = new Pluf_SQL('name=%s', array(
+                $match['metricName']
+            ));
+            $metric = Pluf::factory('Monitor_Metric')->getOne($sql->gen());
+        }else  if (isset($match['metric'])) {
+            $val = $match['metric'];
+            if (is_numeric($val)) {
+                $metric =  new Monitor_Metric($val);
+            }else{                
+                $sql = new Pluf_SQL('name=%s', array(
+                    $val
+                ));
+                $metric = Pluf::factory('Monitor_Metric')->getOne($sql->gen());
+            }
+        }
+        if ($metric && ! $metric->isAnonymous()) {
+            return $metric;
+        }
+        return null;
+    }
+
+    /**
+     * Returns a monitor metric.
+     * You could give metric id in the $match or give monitor (by name or id) and metric name
+     * in the $match to get information of monitor metric
      *
      * @param Pluf_HTTP_Request $request
      * @param array $match
@@ -110,24 +172,37 @@ class Monitor_Views_Property
     public function get($request, $match)
     {
         // Find monitor
-        $monitorId = self::fetchMonitorId($match);
-        if (! isset($monitorId)) {
-            throw new Pluf_Exception_GetMethodSuported('The monitor ID not found.');
+        $tagId = self::fetchMonitorTagId($match);
+        if (! isset($tagId)) {
+            throw new Pluf_HTTP_Error404('The monitor tag is not provided or not found.');
         }
-
-        // Find property
-        if (isset($match['propertyId'])) {
-            $property = new Monitor_Property($match['propertyId']);
-        } else if (isset($match['property'])) {
-            $sql = new Pluf_SQL('name=%s AND monitor=%s', array(
-                $match['property'],
-                $monitorId
-            ));
-            $property = Pluf::factory('Monitor_Property')->getOne($sql->gen());
-        } else {
-            throw new Pluf_Exception('The property was not provided in the parameters.');
+        // Find metric
+        $metric = self::fetchMetric($match);
+        if (! isset($metric)) {
+            throw new Pluf_HTTP_Error404('Metric not found.');
         }
         // Set the default
-        return Monitor_Shortcuts_convertBeanPropertyToResponse($request, $match, $property);
+        return Monitor_Shortcuts_convertBeanPropertyToResponse($request, $match, $metric);
+    }
+
+    /**
+     * Returns a monitor metric.
+     * You could give metric id in the $match or give monitor (by name or id) and metric name
+     * in the $match to get information of monitor metric
+     *
+     * @param Pluf_HTTP_Request $request
+     * @param array $match
+     * @throws Exception
+     * @return array
+     */
+    public function getMetric($request, $match)
+    {
+        // Find metric
+        $metric = self::fetchMetric($match);
+        if (! isset($metric)) {
+            throw new Pluf_HTTP_Error404('Metric not found.');
+        }
+        // Set the default
+        return Monitor_Shortcuts_convertBeanPropertyToResponse($request, $match, $metric);
     }
 }
