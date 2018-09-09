@@ -103,9 +103,10 @@ function Monitor_Shortcuts_BeanPropertiesToPrometheus($request, $bean)
  */
 function Monitor_Shortcuts_BeansToPrometheusLabel($bean)
 {
+    // TODO: hadi, 97-06-18: Fetch tags of metric (be get_tags_list function)
+    // and add these tags as some labels to result
     $labels = $bean->jsonSerialize();
-    $monitor = new Monitor($bean->monitor);
-    $result = $monitor->name . '_' . $bean->name . '_ {';
+    $result = $bean->name . ' {';
     foreach ($labels as $key => $value) {
         if ($key == 'value' || $key == 'modif_dtime') {
             continue;

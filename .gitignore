@@ -16,3 +16,5 @@ tests/tmp
 # KDE
 .directory
 /build/
+
+/tmp/*
