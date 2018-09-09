@@ -42,33 +42,38 @@ class Monitor_REST_API_BasicTest extends TestCase
         $m->install();
         $m->init();
 
-        $user = new User();
+        // Test user
+        $user = new User_Account();
         $user->login = 'test';
-        $user->first_name = 'test';
-        $user->last_name = 'test';
-        $user->email = 'toto@example.com';
-        $user->setPassword('test');
-        $user->active = true;
-        $user->administrator = true;
+        $user->is_active = true;
         if (true !== $user->create()) {
             throw new Exception();
         }
-
-        $role = Role::getFromString('Pluf.owner');
-        $user->setAssoc($role);
+        // Credential of user
+        $credit = new User_Credential();
+        $credit->setFromFormData(array(
+            'account_id' => $user->id
+        ));
+        $credit->setPassword('test');
+        if (true !== $credit->create()) {
+            throw new Exception();
+        }
+        
+        $per = User_Role::getFromString('Pluf.owner');
+        $user->setAssoc($per);
 
         self::$client = new Test_Client(array(
             array(
                 'app' => 'Monitor',
-                'regex' => '#^/api/monitor#',
+                'regex' => '#^/api/v2/monitor#',
                 'base' => '',
-                'sub' => include 'Monitor/urls.php'
+                'sub' => include 'Monitor/urls-v2.php'
             ),
             array(
                 'app' => 'User',
-                'regex' => '#^/api/user#',
+                'regex' => '#^/api/v2/user#',
                 'base' => '',
-                'sub' => include 'User/urls.php'
+                'sub' => include 'User/urls-v2.php'
             )
         ));
     }
@@ -87,22 +92,43 @@ class Monitor_REST_API_BasicTest extends TestCase
      *
      * @test
      */
-    public function getListOfMonitors()
+    public function getListOfMonitorTags()
     {
-        // login
-        $response = self::$client->post('/api/user/login', array(
-            'login' => 'admin',
-            'password' => 'admin'
-        ));
-        Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
+//         // login
+//         $response = self::$client->post('/api/v2/user/login', array(
+//             'login' => 'admin',
+//             'password' => 'admin'
+//         ));
+//         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
 
-        $response = self::$client->get('/api/monitor/find');
+        $response = self::$client->get('/api/v2/monitor/tags');
+        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
+        Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
+        Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
+        Test_Assert::assertResponseNonEmptyPaginateList($response, 'Monitor list is empty?!');
+    }
+    
+    /**
+     *
+     * @test
+     */
+    public function getListOfMetrics()
+    {
+//         // login
+//         $response = self::$client->post('/api/v2/user/login', array(
+//             'login' => 'admin',
+//             'password' => 'admin'
+//         ));
+//         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
+
+        $response = self::$client->get('/api/v2/monitor/metrics');
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
         Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
         Test_Assert::assertResponsePaginateList($response, 'Find result is not JSON paginated list');
         Test_Assert::assertResponseNonEmptyPaginateList($response, 'Monitor list is empty?!');
     }
 
+    
     /**
      * Getting owner monitor as sample
      *
@@ -111,13 +137,13 @@ class Monitor_REST_API_BasicTest extends TestCase
     public function getOwnerMonitor()
     {
         // login
-        $response = self::$client->post('/api/user/login', array(
-            'login' => 'admin',
-            'password' => 'admin'
+        $response = self::$client->post('/api/v2/user/login', array(
+            'login' => 'test',
+            'password' => 'test'
         ));
         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
 
-        $response = self::$client->get('/api/monitor/user/property/owner');
+        $response = self::$client->get('/api/v2/monitor/tags/user/metrics/owner');
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
         Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
         Test_Assert::assertResponseAsModel($response, 'Is not a valid model');
@@ -131,13 +157,13 @@ class Monitor_REST_API_BasicTest extends TestCase
     public function getOwnerMonitorPropertyForPromethues()
     {
         // login
-        $response = self::$client->post('/api/user/login', array(
-            'login' => 'admin',
-            'password' => 'admin'
+        $response = self::$client->post('/api/v2/user/login', array(
+            'login' => 'test',
+            'password' => 'test'
         ));
         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
 
-        $response = self::$client->get('/api/monitor/user/property/owner', array(
+        $response = self::$client->get('/api/v2/monitor/tags/user/metrics/owner', array(
             '_px_format' => 'text/prometheus'
         ));
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
@@ -151,13 +177,13 @@ class Monitor_REST_API_BasicTest extends TestCase
     public function getMonitorsForPromethues()
     {
         // login
-        $response = self::$client->post('/api/user/login', array(
-            'login' => 'admin',
-            'password' => 'admin'
+        $response = self::$client->post('/api/v2/user/login', array(
+            'login' => 'test',
+            'password' => 'test'
         ));
         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
 
-        $response = self::$client->get('/api/monitor/find', array(
+        $response = self::$client->get('/api/v2/monitor/metrics', array(
             '_px_format' => 'text/prometheus'
         ));
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
