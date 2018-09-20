@@ -119,7 +119,7 @@ class Monitor_Metric extends Pluf_Model
             $diff = $now->getTimestamp() - $last->getTimestamp();
             $interval = $this->interval;
             if($interval == null || $interval == 'undefined'){
-                $interval = 3600000;
+                $interval = 36000; // 1 day
             }
             if ($diff <= $interval) {
                 return $this->value;
