@@ -154,10 +154,6 @@ class Monitor_Metric extends Pluf_Model
     {
         $this->modif_dtime = gmdate('Y-m-d H:i:s');
     }
-
-    function restore(){
-        $this->invoke();
-    }
     
 //     /**
 //      * This function is used to load data in installation process.
