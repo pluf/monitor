@@ -59,7 +59,7 @@ class Monitor_REST_API_BasicTest extends TestCase
             throw new Exception();
         }
         
-        $per = User_Role::getFromString('Pluf.owner');
+        $per = User_Role::getFromString('tenant.owner');
         $user->setAssoc($per);
 
         self::$client = new Test_Client(array(
