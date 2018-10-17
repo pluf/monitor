@@ -56,13 +56,11 @@ class Property_BasicTest extends TestCase
      */
     public function getValueOfCacheble()
     {
-        $property = new Monitor_Property();
-        $property->initFromFormData(array(
-            'monitor' => 'testMonitor',
+        $property = new Monitor_Metric();
+        $property->setFromFormData(array(
             'name' => 'auto_create_test_property_getValueOfCacheble',
             'cacheable' => true,
             'interval' => 10000,
-            'type' => 'byte',
             'function' => 'Test_Monitor::random'
         ));
         $property->create();
@@ -78,12 +76,11 @@ class Property_BasicTest extends TestCase
      */
     public function getValueOfCachebleDefaultInterval()
     {
-        $property = new Monitor_Property();
-        $property->initFromFormData(array(
-            'monitor' => 'testMonitor',
+        $property = new Monitor_Metric();
+        $property->setFromFormData(array(
+//             'monitor' => 'testMonitor',
             'name' => 'auto_create_test_property_getValueOfCachebleDefaultInterval',
             'cacheable' => true,
-            'type' => 'byte',
             'function' => 'Test_Monitor::random'
         ));
         $property->create();
@@ -100,13 +97,12 @@ class Property_BasicTest extends TestCase
      */
     public function getValueOfNonCacheble()
     {
-        $property = new Monitor_Property();
-        $property->initFromFormData(array(
-            'monitor' => 'testMonitor',
+        $property = new Monitor_Metric();
+        $property->setFromFormData(array(
+//             'monitor' => 'testMonitor',
             'name' => 'auto_create_test_property_getValueOfNonCacheble',
             'cacheable' => false,
             'interval' => 10000,
-            'type' => 'byte',
             'function' => 'Test_Monitor::random'
         ));
         $property->create();
@@ -122,12 +118,10 @@ class Property_BasicTest extends TestCase
      */
     public function getValueOfNonCachebleDefault()
     {
-        $property = new Monitor_Property();
-        $property->initFromFormData(array(
-            'monitor' => 'testMonitor',
+        $property = new Monitor_Metric();
+        $property->setFromFormData(array(
             'name' => 'auto_create_test_property_getValueOfNonCachebleDefault',
             'interval' => 10000,
-            'type' => 'byte',
             'function' => 'Test_Monitor::random'
         ));
         $property->create();
@@ -143,9 +137,8 @@ class Property_BasicTest extends TestCase
      */
     public function getValueOfMinimal()
     {
-        $property = new Monitor_Property();
-        $property->initFromFormData(array(
-            'monitor' => 'testMonitor',
+        $property = new Monitor_Metric();
+        $property->setFromFormData(array(
             'name' => 'auto_create_test_property_getValueOfMinimal',
             'function' => 'Test_Monitor::random'
         ));
