@@ -59,7 +59,6 @@ class Monitor_Tag extends Pluf_Model
                 'type' => 'Pluf_DB_Field_Manytomany',
                 'model' => 'Monitor_Metric',
                 'is_null' => true,
-                'readable' => false,
                 'editable' => false,
                 'relate_name' => 'tags'
             )
