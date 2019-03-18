@@ -83,17 +83,9 @@ class Monitor_Metric extends Pluf_Model
                 'readable' => true
             ),
             // Relations
-//             'monitor' => array(
-//                 'type' => 'Pluf_DB_Field_Foreignkey',
-//                 'model' => 'Monitor',
-//                 'is_null' => false,
-//                 'is_null' => false,
-//                 'relate_name' => 'properties',
-//                 'editable' => false,
-//                 'readable' => true
-//             )
         );
         
+        Pluf::loadFunction('Pluf_Shortcuts_GetAssociationTableName');
         // Assoc. table
         $tag_asso = $this->_con->pfx . Pluf_Shortcuts_GetAssociationTableName('Monitor_Tag', 'Monitor_Metric');
         $t_metric = $this->_con->pfx . $this->_a['table'];
@@ -154,27 +146,5 @@ class Monitor_Metric extends Pluf_Model
     {
         $this->modif_dtime = gmdate('Y-m-d H:i:s');
     }
-    
-//     /**
-//      * This function is used to load data in installation process.
-//      * Data must contains monitor-tag name.
-//      *
-//      * @param array $data
-//      */
-//     function initFromFormData($data)
-//     {
-//         $this->setFromFormData($data);
-//         $monitorTag = new Monitor_Tag();
-//         $sql = new Pluf_SQL('name=%s', array(
-//             $data['tag']
-//         ));
-//         $monitorTag = $monitorTag->getOne($sql->gen());
-//         if (! isset($monitorTag) || $monitorTag->isAnonymous()) {
-//             $monitorTag = new Monitor_Tag();
-//             $monitorTag->name = $data['monitor'];
-//             if (! $monitorTag->create()) {
-//                 throw new Pluf_Exception('Fail to create monitor tag');
-//             }
-//         }
-//     }
+
 }
