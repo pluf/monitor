@@ -25,10 +25,8 @@ $cfg['installed_apps'] = array(
     'User',
     'Role',
     'Group',
-    'Tenant',
-    'Monitor',
+    'Monitor'
 );
-
 
 $cfg['test'] = false;
 $cfg['timezone'] = 'Europe/Berlin';

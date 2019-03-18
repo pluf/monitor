@@ -19,6 +19,8 @@
 use PHPUnit\Framework\TestCase;
 require_once 'Pluf.php';
 
+set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../apps');
+
 /**
  *
  * @backupGlobals disabled
@@ -62,6 +64,21 @@ class Monitor_REST_API_BasicTest extends TestCase
         $per = User_Role::getFromString('tenant.owner');
         $user->setAssoc($per);
 
+        $mTag = new Monitor_Tag();
+        $mTag->name = 'test';
+        $mTag->description = 'It is a test monitor tag';
+        if(true !== $mTag->create()){
+            throw new Exception();
+        }
+        $metric = new Monitor_Metric();
+        $metric->name = 'random';
+        $metric->description = 'It is a test random monitor metric';
+        $metric->function = 'Test_Monitor::random';
+        if(true !== $metric->create()){
+            throw new Exception();
+        }
+        $mTag->setAssoc($metric);
+        
         self::$client = new Test_Client(array(
             array(
                 'app' => 'Monitor',
@@ -94,13 +111,6 @@ class Monitor_REST_API_BasicTest extends TestCase
      */
     public function getListOfMonitorTags()
     {
-//         // login
-//         $response = self::$client->post('/api/v2/user/login', array(
-//             'login' => 'admin',
-//             'password' => 'admin'
-//         ));
-//         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
-
         $response = self::$client->get('/api/v2/monitor/tags');
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
         Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
@@ -114,13 +124,6 @@ class Monitor_REST_API_BasicTest extends TestCase
      */
     public function getListOfMetrics()
     {
-//         // login
-//         $response = self::$client->post('/api/v2/user/login', array(
-//             'login' => 'admin',
-//             'password' => 'admin'
-//         ));
-//         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
-
         $response = self::$client->get('/api/v2/monitor/metrics');
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
         Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
@@ -130,7 +133,7 @@ class Monitor_REST_API_BasicTest extends TestCase
 
     
     /**
-     * Getting owner monitor as sample
+     * Getting test monitor as sample
      *
      * @test
      */
@@ -143,18 +146,18 @@ class Monitor_REST_API_BasicTest extends TestCase
         ));
         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
 
-        $response = self::$client->get('/api/v2/monitor/tags/user/metrics/owner');
+        $response = self::$client->get('/api/v2/monitor/tags/test/metrics/random');
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
         Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
         Test_Assert::assertResponseAsModel($response, 'Is not a valid model');
     }
 
     /**
-     * Getting owner monitor as sample
+     * Getting test monitor as sample
      *
      * @test
      */
-    public function getOwnerMonitorPropertyForPromethues()
+    public function getTestRandomMonitorPropertyForPromethues()
     {
         // login
         $response = self::$client->post('/api/v2/user/login', array(
@@ -163,7 +166,7 @@ class Monitor_REST_API_BasicTest extends TestCase
         ));
         Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
 
-        $response = self::$client->get('/api/v2/monitor/tags/user/metrics/owner', array(
+        $response = self::$client->get('/api/v2/monitor/tags/test/metrics/random', array(
             '_px_format' => 'text/prometheus'
         ));
         Test_Assert::assertResponseNotNull($response, 'Find result is empty');
