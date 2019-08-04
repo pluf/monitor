@@ -17,35 +17,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
-Pluf::loadFunction('Monitor_Shortcuts_UserLevel');
-Pluf::loadFunction('Monitor_Shortcuts_BeansToPrometheus');
+Pluf::loadFunction('Monitor_Shortcuts_convertMetricToPrometheusLabel');
+Pluf::loadFunction('Monitor_Shortcuts_convertPageOfMetricsToResponse');
 
-class Monitor_Views_Tag
+class Monitor_Views_Tag extends Monitor_Views_Abstract
 {
 
-    const PX_FORMAT_KEY = '_px_format';
-
-    const PX_FORMAT_PROMETHEUS = 'text/prometheus';
-
-    const PX_FORMAT_INFLUXDB = 'text/influxdb';
-
     /**
+     * Get list of metrics from a tag
      *
      * @param Pluf_HTTP_Request $request
      * @param array $match
      * @return Pluf_Paginator
      */
-    public function find($request, $match)
+    public function getMetrics($request, $match)
     {
-        $content = new Pluf_Paginator(new Monitor_Tag());
-        if (key_exists(self::PX_FORMAT_KEY, $request->REQUEST)) {
-            switch ($request->REQUEST[self::PX_FORMAT_KEY]) {
-                case self::PX_FORMAT_PROMETHEUS:
-                case self::PX_FORMAT_INFLUXDB:
-                    break;
-                default:
-                    $content->model_view = 'beans';
-            }
+        $content = new Pluf_Paginator(new Monitor_Metric());
+        $monitorTagId = self::fetchMonitorTagId($match);
+        if ($monitorTagId) {
+            $sql = new Pluf_SQL('monitor_tag_id=%s', array(
+                $monitorTagId
+            ));
+            $content->forced_where = $sql;
+            $content->model_view = 'join_tag';
         }
         $content->list_filters = array(
             'id',
@@ -67,16 +61,23 @@ class Monitor_Views_Tag
         );
         $content->configure(array(), $search_fields, $sort_fields);
         $content->setFromRequest($request);
-        if (key_exists(self::PX_FORMAT_KEY, $request->REQUEST)) {
-            switch ($request->REQUEST[self::PX_FORMAT_KEY]) {
-                case self::PX_FORMAT_PROMETHEUS:
-                    return Monitor_Shortcuts_convertBeanPageResponse($request, $content->render_object());
-                case self::PX_FORMAT_INFLUXDB:
-                    break;
-                default:
-                    break;
-            }
-        }
-        return $content;
+        return Monitor_Shortcuts_convertPageOfMetricsToResponse($request, $match, $content);
     }
+
+    public function getMetric($request, $match)
+    {
+        // Find monitor
+        $tagId = self::fetchMonitorTagId($match);
+        if (! isset($tagId)) {
+            throw new Pluf_HTTP_Error404('The monitor tag is not provided or not found.');
+        }
+        // Find metric
+        $metric = self::fetchMetric($match);
+        if (! isset($metric)) {
+            throw new Pluf_HTTP_Error404('Metric not found.');
+        }
+        // Set the default
+        return Monitor_Shortcuts_convertMetricToResponse($request, $match, $metric);
+    }
+
 }

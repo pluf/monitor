@@ -17,12 +17,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 return array(
-    // ******************************************* Monitor tag
+    // ******************************************* Tags
     array(
         'regex' => '#^/tags$#',
-        'model' => 'Monitor_Views_Tag',
-        'method' => 'find',
-        'http-method' => 'GET'
+        'model' => 'Pluf_Views',
+        'method' => 'findObject',
+        'http-method' => 'GET',
+        'params' => array(
+            'model' => 'Monitor_Tag'
+        ),
+        'precond' => array()
     ),
     array(
         'regex' => '#^/tags/(?P<modelId>\d+)$#',
@@ -34,100 +38,32 @@ return array(
         ),
         'precond' => array()
     ),
+
     // ******************************************* metrics of tag
-//     array(
-//         'regex' => '#^/tags/(?P<tagId>\d+)/metrics$#',
-//         'model' => 'Monitor_Views_Metric',
-//         'method' => 'find',
-//         'http-method' => 'GET'
-//     ),
-//     array(
-//         'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics$#',
-//         'model' => 'Monitor_Views_Metric',
-//         'method' => 'find',
-//         'http-method' => 'GET'
-//     ),
     array(
         'regex' => '#^/tags/(?P<tag>[^/]+)/metrics$#',
-        'model' => 'Monitor_Views_Metric',
-        'method' => 'find',
+        'model' => 'Monitor_Views_Tag',
+        'method' => 'getMetrics',
         'http-method' => 'GET'
     ),
-//     array(
-//         'regex' => '#^/tags/(?P<tagId>\d+)/metrics/(?P<metricId>\d+)$#',
-//         'model' => 'Monitor_Views_Metric',
-//         'method' => 'get',
-//         'http-method' => 'GET'
-//     ),
-//     array(
-//         'regex' => '#^/tags/(?P<tagId>\d+)/metrics/(?P<metricName>[^/]+)$#',
-//         'model' => 'Monitor_Views_Metric',
-//         'method' => 'get',
-//         'http-method' => 'GET'
-//     ),
-//     array(
-//         'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics/(?P<metricId>\d+)$#',
-//         'model' => 'Monitor_Views_Metric',
-//         'method' => 'get',
-//         'http-method' => 'GET'
-//     ),
-//     array(
-//         'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics/(?P<metricName>[^/]+)$#',
-//         'model' => 'Monitor_Views_Metric',
-//         'method' => 'get',
-//         'http-method' => 'GET'
-//     ),
     array(
         'regex' => '#^/tags/(?P<tag>[^/]+)/metrics/(?P<metric>[^/]+)$#',
-        'model' => 'Monitor_Views_Metric',
-        'method' => 'get',
-        'http-method' => 'GET'
-    ),
-    // ******************************************* Monitor metric
-    array(
-        'regex' => '#^/metrics$#',
-        'model' => 'Pluf_Views',
-        'method' => 'findObject',
-        'http-method' => 'GET',
-        'precond' => array(),
-        'params' => array(
-            'model' => 'Monitor_Metric',
-            'sortOrder' => array(
-                'id',
-                'DESC'
-            )
-        )
-    ),
-//     array(
-//         'regex' => '#^/metrics/(?P<metricId>\d+)$#',
-//         'model' => 'Monitor_Views_Metric',
-//         'method' => 'getMetric',
-//         'http-method' => 'GET'
-//     ),
-//     array(
-//         'regex' => '#^/metrics/(?P<metricName>[^/]+)$#',
-//         'model' => 'Monitor_Views_Metric',
-//         'method' => 'getMetric',
-//         'http-method' => 'GET'
-//     ),
-    array(
-        'regex' => '#^/metrics/(?P<metric>[^/]+)$#',
-        'model' => 'Monitor_Views_Metric',
+        'model' => 'Monitor_Views_Tag',
         'method' => 'getMetric',
         'http-method' => 'GET'
     ),
-    
-    // ******************************************* Old versions
+
+    // ******************************************* Monitor metric
     array(
-        'regex' => '#^/tags/(?P<tagName>[^/]+)/metrics$#',
+        'regex' => '#^/metrics$#',
         'model' => 'Monitor_Views_Metric',
         'method' => 'find',
         'http-method' => 'GET'
     ),
     array(
-        'regex' => '#^/(?P<tagName>[^/]+)/(?P<metricName>[^/]+)$#',
+        'regex' => '#^/metrics/(?P<metric>[^/]+)$#',
         'model' => 'Monitor_Views_Metric',
         'method' => 'get',
         'http-method' => 'GET'
-    )
+    ),
 );
