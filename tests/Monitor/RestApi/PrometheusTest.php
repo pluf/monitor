@@ -114,8 +114,8 @@ class PrometheusTest extends TestCase
         $response = self::$client->get('/api/v2/monitor/metrics', array(
             '_px_format' => 'text/prometheus'
         ));
-        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
-        Test_Assert::assertResponseStatusCode($response, 200, 'Find status code is not 200');
+        $this->assertResponseNotNull($response, 'Find result is empty');
+        $this->assertResponseStatusCode($response, 200, 'Find status code is not 200');
         // TODO: maso, 2019: check if this is prometheus value
     }
 
@@ -132,12 +132,12 @@ class PrometheusTest extends TestCase
             'login' => 'test',
             'password' => 'test'
         ));
-        Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
+        $this->assertResponseStatusCode($response, 200, 'Fail to login');
 
         $response = self::$client->get('/api/v2/monitor/tags/test/metrics', array(
             '_px_format' => 'text/prometheus'
         ));
-        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
+        $this->assertResponseNotNull($response, 'Find result is empty');
     }
 
 
@@ -153,11 +153,11 @@ class PrometheusTest extends TestCase
             'login' => 'test',
             'password' => 'test'
         ));
-        Test_Assert::assertResponseStatusCode($response, 200, 'Fail to login');
+        $this->assertResponseStatusCode($response, 200, 'Fail to login');
 
         $response = self::$client->get('/api/v2/monitor/tags/test/metrics/random', array(
             '_px_format' => 'text/prometheus'
         ));
-        Test_Assert::assertResponseNotNull($response, 'Find result is empty');
+        $this->assertResponseNotNull($response, 'Find result is empty');
     }
 }

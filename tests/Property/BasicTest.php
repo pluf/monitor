@@ -66,9 +66,9 @@ class Property_BasicTest extends TestCase
         $property->create();
         
         $result = $property->invoke(array(), array());
-        Test_Assert::assertEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertEquals($result, $property->invoke(array(), array()));
+        $this->assertEquals($result, $property->invoke(array(), array()));
+        $this->assertEquals($result, $property->invoke(array(), array()));
+        $this->assertEquals($result, $property->invoke(array(), array()));
     }
 
     /**
@@ -87,9 +87,9 @@ class Property_BasicTest extends TestCase
         
         $result = $property->invoke(array(), array());
         $result = $property->invoke(array(), array());
-        Test_Assert::assertEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertEquals($result, $property->invoke(array(), array()));
+        $this->assertEquals($result, $property->invoke(array(), array()));
+        $this->assertEquals($result, $property->invoke(array(), array()));
+        $this->assertEquals($result, $property->invoke(array(), array()));
     }
 
     /**
@@ -108,9 +108,9 @@ class Property_BasicTest extends TestCase
         $property->create();
         
         $result = $property->invoke(array(), array());
-        Test_Assert::assertNotEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertNotEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertNotEquals($result, $property->invoke(array(), array()));
+        $this->assertNotEquals($result, $property->invoke(array(), array()));
+        $this->assertNotEquals($result, $property->invoke(array(), array()));
+        $this->assertNotEquals($result, $property->invoke(array(), array()));
     }
 
     /**
@@ -127,9 +127,9 @@ class Property_BasicTest extends TestCase
         $property->create();
         
         $result = $property->invoke(array(), array());
-        Test_Assert::assertNotEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertNotEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertNotEquals($result, $property->invoke(array(), array()));
+        $this->assertNotEquals($result, $property->invoke(array(), array()));
+        $this->assertNotEquals($result, $property->invoke(array(), array()));
+        $this->assertNotEquals($result, $property->invoke(array(), array()));
     }
 
     /**
@@ -145,8 +145,8 @@ class Property_BasicTest extends TestCase
         $property->create();
         
         $result = $property->invoke(array(), array());
-        Test_Assert::assertNotEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertNotEquals($result, $property->invoke(array(), array()));
-        Test_Assert::assertNotEquals($result, $property->invoke(array(), array()));
+        $this->assertNotEquals($result, $property->invoke(array(), array()));
+        $this->assertNotEquals($result, $property->invoke(array(), array()));
+        $this->assertNotEquals($result, $property->invoke(array(), array()));
     }
 }
