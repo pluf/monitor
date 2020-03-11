@@ -16,16 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use Pluf\Test\TestCase;
+namespace Pluf\Test\Monitor\RestApi;
+
+use Pluf\Exception;
 use Pluf\Test\Client;
+use Pluf\Test\TestCase;
+use Monitor_Metric;
+use Monitor_Tag;
+use Pluf;
+use Pluf_Migration;
+use User_Account;
+use User_Credential;
+use User_Role;
 
-set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../apps');
-
-/**
- *
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
 class PrometheusTest extends TestCase
 {
 
@@ -39,8 +42,8 @@ class PrometheusTest extends TestCase
      */
     public static function createDataBase()
     {
-        Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        Pluf::start(__DIR__ . '/../../conf/config.php');
+        $m = new Pluf_Migration();
         $m->install();
         $m->init();
 
@@ -73,26 +76,13 @@ class PrometheusTest extends TestCase
         $metric = new Monitor_Metric();
         $metric->name = 'random';
         $metric->description = 'It is a test random monitor metric';
-        $metric->function = 'Test_Monitor::random';
+        $metric->function = '\\Pluf\\RandomMonitor\\Monitor::random';
         if (true !== $metric->create()) {
             throw new Exception();
         }
         $mTag->setAssoc($metric);
 
-        self::$client = new Client(array(
-            array(
-                'app' => 'Monitor',
-                'regex' => '#^/api/v2/monitor#',
-                'base' => '',
-                'sub' => include 'Monitor/urls-v2.php'
-            ),
-            array(
-                'app' => 'User',
-                'regex' => '#^/api/v2/user#',
-                'base' => '',
-                'sub' => include 'User/urls-v2.php'
-            )
-        ));
+        self::$client = new Client();
     }
 
     /**
@@ -101,7 +91,7 @@ class PrometheusTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(Pluf::f('installed_apps'));
+        $m = new Pluf_Migration();
         $m->unInstall();
     }
 
@@ -111,7 +101,7 @@ class PrometheusTest extends TestCase
      */
     public function getListOfMonitorsInPromethues()
     {
-        $response = self::$client->get('/api/v2/monitor/metrics', array(
+        $response = self::$client->get('/monitor/metrics', array(
             '_px_format' => 'text/prometheus'
         ));
         $this->assertResponseNotNull($response, 'Find result is empty');
@@ -128,13 +118,13 @@ class PrometheusTest extends TestCase
     public function getTestMonitorsPropertyForPromethues()
     {
         // login
-        $response = self::$client->post('/api/v2/user/login', array(
+        $response = self::$client->post('/user/login', array(
             'login' => 'test',
             'password' => 'test'
         ));
         $this->assertResponseStatusCode($response, 200, 'Fail to login');
 
-        $response = self::$client->get('/api/v2/monitor/tags/test/metrics', array(
+        $response = self::$client->get('/monitor/tags/test/metrics', array(
             '_px_format' => 'text/prometheus'
         ));
         $this->assertResponseNotNull($response, 'Find result is empty');
@@ -149,13 +139,13 @@ class PrometheusTest extends TestCase
     public function getTestRandomMonitorPropertyForPromethues()
     {
         // login
-        $response = self::$client->post('/api/v2/user/login', array(
+        $response = self::$client->post('/user/login', array(
             'login' => 'test',
             'password' => 'test'
         ));
         $this->assertResponseStatusCode($response, 200, 'Fail to login');
 
-        $response = self::$client->get('/api/v2/monitor/tags/test/metrics/random', array(
+        $response = self::$client->get('/monitor/tags/test/metrics/random', array(
             '_px_format' => 'text/prometheus'
         ));
         $this->assertResponseNotNull($response, 'Find result is empty');

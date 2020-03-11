@@ -16,15 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
-require_once 'Pluf.php';
-set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../apps');
+namespace Pluf\Test\Property;
 
-/**
- * @backupGlobals disabled
- * @backupStaticAttributes disabled
- */
-class Property_BasicTest extends TestCase
+use Pluf\Test\TestCase;
+use Monitor_Metric;
+use Pluf;
+use Pluf_Migration;
+
+class BasicTest extends TestCase
 {
 
     /**
@@ -33,9 +32,7 @@ class Property_BasicTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(array_merge(Pluf::f('installed_apps'), array(
-            'Test'
-        )));
+        $m = new Pluf_Migration();
         $m->install();
         $m->init();
     }
@@ -45,9 +42,7 @@ class Property_BasicTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(array_merge(Pluf::f('installed_apps'), array(
-            'Test'
-        )));
+        $m = new Pluf_Migration();
         $m->unInstall();
     }
 
@@ -61,7 +56,7 @@ class Property_BasicTest extends TestCase
             'name' => 'auto_create_test_property_getValueOfCacheble',
             'cacheable' => true,
             'interval' => 10000,
-            'function' => 'Test_Monitor::random'
+            'function' => '\\Pluf\\RandomMonitor\\Monitor::random'
         ));
         $property->create();
         
@@ -81,7 +76,7 @@ class Property_BasicTest extends TestCase
 //             'monitor' => 'testMonitor',
             'name' => 'auto_create_test_property_getValueOfCachebleDefaultInterval',
             'cacheable' => true,
-            'function' => 'Test_Monitor::random'
+            'function' => '\\Pluf\\RandomMonitor\\Monitor::random'
         ));
         $property->create();
         
@@ -103,7 +98,7 @@ class Property_BasicTest extends TestCase
             'name' => 'auto_create_test_property_getValueOfNonCacheble',
             'cacheable' => false,
             'interval' => 10000,
-            'function' => 'Test_Monitor::random'
+            'function' => '\\Pluf\\RandomMonitor\\Monitor::random'
         ));
         $property->create();
         
@@ -122,7 +117,7 @@ class Property_BasicTest extends TestCase
         $property->setFromFormData(array(
             'name' => 'auto_create_test_property_getValueOfNonCachebleDefault',
             'interval' => 10000,
-            'function' => 'Test_Monitor::random'
+            'function' => '\\Pluf\\RandomMonitor\\Monitor::random'
         ));
         $property->create();
         
@@ -140,7 +135,7 @@ class Property_BasicTest extends TestCase
         $property = new Monitor_Metric();
         $property->setFromFormData(array(
             'name' => 'auto_create_test_property_getValueOfMinimal',
-            'function' => 'Test_Monitor::random'
+            'function' => '\\Pluf\\RandomMonitor\\Monitor::random'
         ));
         $property->create();
         

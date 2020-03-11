@@ -23,7 +23,8 @@ $cfg = include 'sqlite.config.php';
 $cfg['installed_apps'] = array(
     'Pluf',
     'User',
-    'Monitor'
+    'Monitor',
+    'RandomMonitor'
 );
 
 $cfg['test'] = false;
