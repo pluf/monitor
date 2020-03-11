@@ -1,6 +1,5 @@
 {
 	"name": "Monitor",
-	"version": "4.0.0",
 	"title": "Monitoring system",
 	"model": [
 		"Monitor_Tag",

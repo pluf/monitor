@@ -1,7 +1,7 @@
 <?php
 /*
  * This file is part of Pluf Framework, a simple PHP Application Framework.
- * Copyright (C) 2010-2020 Phoinex Scholars Co. (http://dpq.co.ir)
+ * Copyright (C) 2010-2020 Phoinex Scholars Co. http://dpq.co.ir
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-return array(
-    'Monitor_Tag' => array(
-        'relate_to_many' => array(
-            'Monitor_Metric'
-        ),
-    ),
-);
+namespace Pluf\Monitor;
+
+use Pluf;
+
+class Module extends \Pluf\Module
+{
+
+    const moduleJsonPath = __DIR__ . '/module.json';
+
+    const relations = array(
+        'Monitor_Tag' => array(
+            'relate_to_many' => array(
+                'Monitor_Metric'
+            ),
+        )
+    );
+
+    const urlsPath = __DIR__ . '/urls.php';
+
+    public function init(Pluf $bootstrap): void
+    {}
+}
+

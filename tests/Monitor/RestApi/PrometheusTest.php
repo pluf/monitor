@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-use PHPUnit\Framework\TestCase;
-require_once 'Pluf.php';
+use Pluf\Test\TestCase;
+use Pluf\Test\Client;
 
 set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../apps');
 
@@ -26,7 +26,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../apps');
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
-class REST_API_PrometheusTest extends TestCase
+class PrometheusTest extends TestCase
 {
 
     private static $client = null;
@@ -79,7 +79,7 @@ class REST_API_PrometheusTest extends TestCase
         }
         $mTag->setAssoc($metric);
 
-        self::$client = new Test_Client(array(
+        self::$client = new Client(array(
             array(
                 'app' => 'Monitor',
                 'regex' => '#^/api/v2/monitor#',
