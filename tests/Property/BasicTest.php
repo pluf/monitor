@@ -32,9 +32,7 @@ class BasicTest extends TestCase
     public static function createDataBase()
     {
         Pluf::start(__DIR__ . '/../conf/config.php');
-        $m = new Pluf_Migration(array_merge(Pluf::f('installed_apps'), array(
-            'Test'
-        )));
+        $m = new Pluf_Migration();
         $m->install();
         $m->init();
     }
@@ -44,9 +42,7 @@ class BasicTest extends TestCase
      */
     public static function removeDatabses()
     {
-        $m = new Pluf_Migration(array_merge(Pluf::f('installed_apps'), array(
-            'Test'
-        )));
+        $m = new Pluf_Migration();
         $m->unInstall();
     }
 
