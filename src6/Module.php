@@ -29,11 +29,9 @@ class Module extends \Pluf\Module
         'Monitor_Tag' => array(
             'relate_to_many' => array(
                 'Monitor_Metric'
-            ),
+            )
         )
     );
-
-    const urlsPath = __DIR__ . '/urls.php';
 
     public function init(Pluf $bootstrap): void
     {}

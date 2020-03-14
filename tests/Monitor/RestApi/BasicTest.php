@@ -92,7 +92,7 @@ class BasicTest extends TestCase
     public static function removeDatabses()
     {
         $m = new Pluf_Migration(Pluf::f('installed_apps'));
-        $m->unInstall();
+        $m->uninstall();
     }
 
     /**
