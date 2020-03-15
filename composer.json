@@ -1,5 +1,6 @@
 {
 	"name" : "pluf/monitor",
+	"version" : "6.0.5",
 	"description" : "Pluf monitor module",
 	"type" : "library",
 	"license" : "MIT",
@@ -16,18 +17,27 @@
 	],
 	"minimum-stability" : "stable",
 	"require" : {
-		"pluf/core" : "5.13.x",
-		"pluf/user" : "5.13.x"
+		"pluf/core" : "6.x",
+		"pluf/user" : "6.x"
 	},
 	"require-dev" : {
-		"pluf/test" : "5.13.x"
+		"pluf/test" : "6.x"
 	},
 	"include-path" : [
 		"src/"
 	],
 	"autoload" : {
 		"psr-0" : {
-			"test" : ""
+			"" : "src"
+		},
+		"psr-4" : {
+			"Pluf\\Monitor\\" : "src6/"
+		}
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"Pluf\\Test\\" : "tests",
+			"Pluf\\RandomMonitor\\" : "examples/RandomMonitor"
 		}
 	},
 	"support" : {
@@ -43,5 +53,35 @@
 		"framework",
 		"restfull",
 		"pluf-module"
+	],
+	"repositories" : [{
+			"type" : "path",
+			"url" : "../core",
+			"name" : "pluf/core",
+			"options" : {
+				"symlink" : true
+			}
+		}, {
+			"type" : "path",
+			"url" : "../test",
+			"name" : "pluf/test",
+			"options" : {
+				"symlink" : true
+			}
+		}, {
+			"type" : "path",
+			"url" : "../http2",
+			"name" : "pluf/http2",
+			"options" : {
+				"symlink" : true
+			}
+		}, {
+			"type" : "path",
+			"url" : "../user",
+			"name" : "pluf/user",
+			"options" : {
+				"symlink" : true
+			}
+		}
 	]
 }

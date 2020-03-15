@@ -1,11 +1,13 @@
 <?php
 
+namespace Pluf\RandomMonitor;
+
 /**
  * Test monitor
  * @author maso
  *
  */
-class Test_Monitor
+class Monitor
 {
 
     /**
