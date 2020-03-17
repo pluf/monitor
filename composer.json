@@ -54,7 +54,7 @@
 		"restfull",
 		"pluf-module"
 	],
-	"repositories" : [{
+	"repositories~" : [{
 			"type" : "path",
 			"url" : "../core",
 			"name" : "pluf/core",
