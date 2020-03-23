@@ -1,6 +1,6 @@
 {
 	"name" : "pluf/monitor",
-	"version" : "6.0.6",
+	"version" : "6.0.7",
 	"description" : "Pluf monitor module",
 	"type" : "library",
 	"license" : "MIT",
