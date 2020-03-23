@@ -132,7 +132,7 @@ class Monitor_Metric extends Pluf_Model
         ));
         $this->value = $result;
         if ($this->cacheable && ! $this->update()) {
-            throw new Pluf_Exception('Fail to update model');
+            throw new \Pluf\Exception('Fail to update model');
         }
         return $this->value;
     }

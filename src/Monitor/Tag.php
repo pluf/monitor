@@ -90,7 +90,7 @@ class Monitor_Tag extends Pluf_Model
             $sql = new Pluf_SQL('name=%s', array(
                 $rel['tag']
             ));
-            $monitorTag = $monitorTag->getOne($sql->gen());
+            $model = $model->getOne($sql->gen());
         }
     }
 }
