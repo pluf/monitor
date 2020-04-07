@@ -20,13 +20,13 @@ class Monitor_Metric extends Pluf_Model
         $this->_a['table'] = 'monitor_metrics';
         $this->_a['cols'] = array(
             'id' => array(
-                'type' => 'Pluf_DB_Field_Sequence',
+                'type' => 'Sequence',
                 'blank' => true,
                 'editable' => false,
                 'readable' => true
             ),
             'name' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'is_null' => false,
                 'size' => 100,
                 'unique' => true,
@@ -34,14 +34,14 @@ class Monitor_Metric extends Pluf_Model
                 'readable' => true
             ),
             'description' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'is_null' => true,
                 'size' => 250,
                 'editable' => true,
                 'readable' => true
             ),
             'value' => array(
-                'type' => 'Pluf_DB_Field_Float',
+                'type' => 'Float',
                 'is_null' => true,
                 'is_null' => true,
                 'default' => 0.0,
@@ -49,48 +49,56 @@ class Monitor_Metric extends Pluf_Model
                 'readable' => true
             ),
             'unit' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'is_null' => true,
                 'size' => 100,
                 'editable' => false,
                 'readable' => true
             ),
-            
+
             'function' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => 'Varchar',
                 'is_null' => true,
                 'size' => 100,
                 'editable' => false,
                 'readable' => false
             ),
             'interval' => array(
-                'type' => 'Pluf_DB_Field_Integer',
+                'type' => 'Integer',
                 'is_null' => true,
                 'editable' => false,
                 'readable' => false
             ),
             'cacheable' => array(
-                'type' => 'Pluf_DB_Field_Boolean',
+                'type' => 'Boolean',
                 'is_null' => true,
                 'defualt' => false,
                 'editable' => false,
                 'readable' => false
             ),
             'modif_dtime' => array(
-                'type' => 'Pluf_DB_Field_Datetime',
+                'type' => 'Datetime',
                 'is_null' => true,
                 'editable' => false,
                 'readable' => true
-            ),
+            )
             // Relations
         );
+    }
+
+    public function loadViews(): array
+    {
+        $engine = $this->getEngine();
+        $schema = $engine->getSchema();
         
-        Pluf::loadFunction('Pluf_Shortcuts_GetAssociationTableName');
+        $tag = new Monitor_Tag();
+
         // Assoc. table
-        $tag_asso = $this->_con->pfx . Pluf_Shortcuts_GetAssociationTableName('Monitor_Tag', 'Monitor_Metric');
-        $t_metric = $this->_con->pfx . $this->_a['table'];
-        $metric_fk = Pluf_Shortcuts_GetForeignKeyName('Monitor_Metric');
-        $this->_a['views'] = array(
+        $tag_asso = $schema->getRelationTable($this, $tag);
+        $t_metric = $schema->getTableName($this);
+        $metric_fk = $schema->getAssocField($this);
+
+        return array(
             'join_tag' => array(
                 'join' => 'LEFT JOIN ' . $tag_asso . ' ON ' . $t_metric . '.id=' . $metric_fk
             )
@@ -110,7 +118,7 @@ class Monitor_Metric extends Pluf_Model
             $last = new DateTime($this->modif_dtime);
             $diff = $now->getTimestamp() - $last->getTimestamp();
             $interval = $this->interval;
-            if($interval == null || $interval == 'undefined'){
+            if ($interval == null || $interval == 'undefined') {
                 $interval = 36000; // 1 day
             }
             if ($diff <= $interval) {
@@ -119,7 +127,7 @@ class Monitor_Metric extends Pluf_Model
         }
         // Get new value
         $request = null;
-        if(array_key_exists('_PX_request', $GLOBALS)){
+        if (array_key_exists('_PX_request', $GLOBALS)) {
             $request = $GLOBALS['_PX_request'];
         }
         $match = array(
@@ -146,5 +154,4 @@ class Monitor_Metric extends Pluf_Model
     {
         $this->modif_dtime = gmdate('Y-m-d H:i:s');
     }
-
 }

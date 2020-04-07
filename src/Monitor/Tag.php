@@ -1,11 +1,12 @@
 <?php
+use Pluf\Db\Engine;
 
 /**
  * Monitor tag
  *
  * @author maso <mostafa.barmshory@dpq.co.ir>
  * @author hadi <mohammad.hadi.mansouri@dpq.co.ir>
- *
+ *        
  */
 class Monitor_Tag extends Pluf_Model
 {
@@ -20,13 +21,13 @@ class Monitor_Tag extends Pluf_Model
         $this->_a['table'] = 'monitor_tags';
         $this->_a['cols'] = array(
             'id' => array(
-                'type' => 'Pluf_DB_Field_Sequence',
+                'type' => Engine::SEQUENCE,
                 'blank' => true,
                 'editable' => false,
                 'readable' => true
             ),
             'name' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => Engine::VARCHAR,
                 'is_null' => false,
                 'unique' => true,
                 'size' => 100,
@@ -34,20 +35,20 @@ class Monitor_Tag extends Pluf_Model
                 'readable' => true
             ),
             'description' => array(
-                'type' => 'Pluf_DB_Field_Varchar',
+                'type' => Engine::VARCHAR,
                 'is_null' => true,
                 'size' => 250,
                 'editable' => true,
                 'readable' => true
             ),
             'creation_dtime' => array(
-                'type' => 'Pluf_DB_Field_Datetime',
+                'type' => Engine::DATETIME,
                 'is_null' => true,
                 'editable' => false,
                 'readable' => true
             ),
             'modif_dtime' => array(
-                'type' => 'Pluf_DB_Field_Datetime',
+                'type' => Engine::DATETIME,
                 'is_null' => true,
                 'editable' => false,
                 'readable' => true
@@ -56,7 +57,7 @@ class Monitor_Tag extends Pluf_Model
              * Relations
              */
             'metrics' => array(
-                'type' => 'Pluf_DB_Field_Manytomany',
+                'type' => Engine::MANY_TO_MANY,
                 'model' => 'Monitor_Metric',
                 'is_null' => true,
                 'editable' => false,
