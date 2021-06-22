@@ -1,5 +1,7 @@
 <?php
 
+use Pluf\Data\Schema;
+
 /**
  * Monitor
  *
@@ -81,28 +83,35 @@ class Monitor_Metric extends Pluf_Model
                 'is_null' => true,
                 'editable' => false,
                 'readable' => true
-            )
+            ),
+            
             // Relations
+            'tags' => [
+                'type' => Schema::MANY_TO_MANY,
+                
+            ]
         );
     }
 
     public function loadViews(): array
     {
-        $engine = $this->getEngine();
-        $schema = $engine->getSchema();
-        
-        $tag = new Monitor_Tag();
-
-        // Assoc. table
-        $tag_asso = $schema->getRelationTable($this, $tag);
-        $t_metric = $schema->getTableName($this);
-        $metric_fk = $schema->getAssocField($this);
-
-        return array(
-            'join_tag' => array(
-                'join' => 'LEFT JOIN ' . $tag_asso . ' ON ' . $t_metric . '.id=' . $metric_fk
-            )
-        );
+//         $engine = $this->getEngine();
+//         $schema = $engine->getSchema();
+//         $tag = new Monitor_Tag();
+//         // Assoc. table
+//         $tag_asso = $schema->getRelationTable($this, $tag);
+//         $t_metric = $schema->getTableName($this);
+//         $metric_fk = $schema-> ($this);
+//             'join_tag' => array(
+//                 'join' => 'LEFT JOIN ' . $tag_asso . ' ON ' . $t_metric . '.id=' . $metric_fk
+//             )
+        return [
+            'join_tag' => [
+                'model' => Monitor_Tag::class,
+                'alias' => 'tag',
+                'masterProperty' => 'tags'
+            ],
+        ];
     }
 
     /**
